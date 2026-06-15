@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Producto — Mundo Delis</title>
+<link rel="icon" href="img/logo.avif" type="image/avif">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
@@ -16,7 +17,7 @@
   <div class="top-bar">
     <a id="back-link" href="menu.html" class="back-btn" aria-label="Volver"><i class="ti ti-arrow-left"></i></a>
     <span class="top-title" id="top-title"></span>
-    <div class="top-logo"><i class="ti ti-rosette"></i></div>
+    <div class="top-logo"><img src="img/logo.avif" alt="Logo" class="top-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><i class="ti ti-rosette" style="display:none"></i></div>
   </div>
 
   <div id="detail-content"></div>
@@ -29,34 +30,34 @@ const CATS = {
   galleteria: {
     title: 'Galletería', icon: 'ti-cookie',
     prods: [
-      { id:'g1', name:'Merengues',              desc:'x80gr. Crujientes por fuera y suaves por dentro. Elaborados artesanalmente con clara de huevo y azúcar. Perfectos para acompañar un café.',                          price:12000, icon:'ti-cookie' },
-      { id:'g2', name:'Brownies',               desc:'Húmedos, con borde crocante y centro suave. Preparados con cacao de alta calidad. Una de las opciones más pedidas de la casa.',                                       price:8000,  icon:'ti-cookie', badge:'rec' },
-      { id:'g3', name:'Pavlovas',               desc:'Base de merengue horneado con frutas frescas de temporada y crema. Un postre ligero con textura única: crocante por fuera y suave por dentro.',                       price:10000, icon:'ti-cookie' },
-      { id:'g4', name:'Alfajores',              desc:'Galletas suaves de maicena rellenas de arequipe artesanal y cubiertas en azúcar glass. Un clásico latinoamericano hecho con amor.',                                  price:3500,  icon:'ti-cookie' },
-      { id:'g5', name:'Galletas de mantequilla',desc:'Galletas de mantequilla con relleno de bocadillo. Unidad x13 galletas. Crujientes, dulces y con ese sabor que recuerda a la repostería casera.',                    price:10000, icon:'ti-cookie' },
-      { id:'g6', name:'New York cookies',       desc:'Galletas estilo americano con chips de chocolate belga. Grandes, suaves en el centro y ligeramente crocantes en los bordes. Irresistibles.',                          price:5000,  icon:'ti-cookie' },
+      { id:'g1', name:'Merengues',               desc:'x80gr. Crujientes por fuera y suaves por dentro. Elaborados artesanalmente con clara de huevo y azúcar. Perfectos para acompañar un café.',                          price:12000, img:'img/galleteria/merengues.avif' },
+      { id:'g2', name:'Brownies',                desc:'Húmedos, con borde crocante y centro suave. Preparados con cacao de alta calidad. Una de las opciones más pedidas de la casa.',                                       price:8000,  img:'img/galleteria/brownies.avif', badge:'rec' },
+      { id:'g3', name:'Pavlovas',                desc:'Base de merengue horneado con frutas frescas de temporada y crema. Un postre ligero con textura única: crocante por fuera y suave por dentro.',                       price:10000, img:'img/galleteria/pavlovas.avif' },
+      { id:'g4', name:'Alfajores',               desc:'Galletas suaves de maicena rellenas de arequipe artesanal y cubiertas en azúcar glass. Un clásico latinoamericano hecho con amor.',                                  price:3500,  img:'img/galleteria/alfajores.avif' },
+      { id:'g5', name:'Galletas de mantequilla', desc:'Galletas de mantequilla con relleno de bocadillo. Unidad x13 galletas. Crujientes, dulces y con ese sabor que recuerda a la repostería casera.',                    price:10000, img:'img/galleteria/galletas-mantequilla.avif' },
+      { id:'g6', name:'New York cookies',        desc:'Galletas estilo americano con chips de chocolate belga. Grandes, suaves en el centro y ligeramente crocantes en los bordes. Irresistibles.',                          price:5000,  img:'img/galleteria/new-york-cookies.avif' },
     ]
   },
   postres: {
     title: 'Postres', icon: 'ti-ice-cream',
     prods: [
-      { id:'p1',  name:'Tarta de Queso',             desc:'Cheesecake horneado al estilo artesanal, con base de galleta y relleno cremoso de queso. Textura suave y sabor equilibrado entre dulce y lácteo.',             price:22000, icon:'ti-ice-cream' },
-      { id:'p2',  name:'Crema con durazno',           desc:'Crema de la casa preparada con ingredientes frescos, acompañada de trozos de durazno natural. Refrescante y ligera.',                                          price:20000, icon:'ti-ice-cream', badge:'new' },
-      { id:'p3',  name:'Tres Leches Tradicional',     desc:'Bizcocho esponjoso bañado en una mezcla de leche condensada, leche evaporada y crema de leche. El clásico que nunca falla.',                                   price:20000, icon:'ti-ice-cream' },
-      { id:'p4',  name:'Arroz con Leche',             desc:'Receta tradicional preparada con leche entera, canela y un toque especial de la casa. Cremoso y reconfortante.',                                               price:15000, icon:'ti-ice-cream' },
-      { id:'p5',  name:'Arequipe Fusión',             desc:'Postre cremoso elaborado con arequipe artesanal colombiano. Suave, dulce y con una textura inigualable.',                                                      price:15000, icon:'ti-ice-cream' },
-      { id:'p6',  name:'Porción torta de zanahoria',  desc:'Torta rústica de zanahoria con frutos secos. Húmeda, esponjosa y con ese sabor especiado que la hace única. ¡Recién llegada al menú!',                        price:17000, icon:'ti-ice-cream', badge:'new' },
-      { id:'p7',  name:'Brownie con helado',          desc:'Brownie caliente recién salido del horno, acompañado de una bola de helado premium. La combinación perfecta de caliente y frío.',                              price:20000, icon:'ti-ice-cream' },
-      { id:'p8',  name:'Genovesa',                    desc:'Bizcocho clásico esponjoso de la casa, con una miga suave y aireada. Ideal para quienes buscan algo ligero y delicado.',                                       price:20000, icon:'ti-ice-cream' },
-      { id:'p9',  name:'Napoleón',                    desc:'Hojaldre en capas crujientes con crema pastelera suave entre cada lámina. Un postre elegante con mucha personalidad.',                                         price:17000, icon:'ti-ice-cream' },
-      { id:'p10', name:'Cuatro Leches',               desc:'Versión más cremosa del tres leches, con una capa adicional de leche condensada. Intenso, húmedo y delicioso.',                                                price:18000, icon:'ti-ice-cream' },
-      { id:'p11', name:'Pie de Limón',                desc:'Base de galleta crujiente, relleno de crema de limón suavemente ácida y cubierto de merengue dorado. Equilibrio perfecto.',                                   price:18000, icon:'ti-ice-cream' },
-      { id:'p12', name:'Flan de Caramelo',            desc:'Flan suave y sedoso bañado en caramelo dorado. Preparado con la receta tradicional de la casa, sin complicaciones y lleno de sabor.',                         price:18000, icon:'ti-ice-cream' },
-      { id:'p13', name:'Porción de Torta Fría',       desc:'Porción individual de la torta fría de la casa. Capas de galleta, crema y sabor en cada bocado. No necesita horno.',                                          price:17000, icon:'ti-ice-cream' },
-      { id:'p14', name:'Torta amapola y yogurt',      desc:'Bizcocho con semillas de amapola y base de yogurt natural. Esponjoso, aromático y con un sabor suave y diferente.',                                           price:15000, icon:'ti-ice-cream' },
-      { id:'p15', name:'Fresas con crema',            desc:'Crema de la casa preparada diariamente, acompañada de trozos de fresa fresca. Clásico y refrescante.',                                                        price:22000, icon:'ti-ice-cream' },
-      { id:'p16', name:'Raspao MD',                   desc:'El clásico raspao colombiano con toppings especiales de Mundo Delis: sirope, leche condensada y frutas. Perfecto para el calor.',                             price:18000, icon:'ti-ice-cream' },
-      { id:'p17', name:'Cremoso de Brownie',          desc:'Postre en copa con capas de crema suave y trozos de brownie. Dulce, cremoso y con la textura perfecta en cada cucharada.',                                    price:15000, icon:'ti-ice-cream' },
+      { id:'p1',  name:'Tarta de Queso',             desc:'Cheesecake horneado al estilo artesanal, con base de galleta y relleno cremoso de queso. Textura suave y sabor equilibrado entre dulce y lácteo.',             price:22000, img:'img/postres/tarta-queso.avif' },
+      { id:'p2',  name:'Crema con durazno',           desc:'Crema de la casa preparada con ingredientes frescos, acompañada de trozos de durazno natural. Refrescante y ligera.',                                          price:20000, img:'img/postres/crema-durazno.avif', badge:'new' },
+      { id:'p3',  name:'Tres Leches Tradicional',     desc:'Bizcocho esponjoso bañado en una mezcla de leche condensada, leche evaporada y crema de leche. El clásico que nunca falla.',                                   price:20000, img:'img/postres/tres-leches.avif' },
+      { id:'p4',  name:'Arroz con Leche',             desc:'Receta tradicional preparada con leche entera, canela y un toque especial de la casa. Cremoso y reconfortante.',                                               price:15000, img:'img/postres/arroz-leche.avif' },
+      { id:'p5',  name:'Arequipe Fusión',             desc:'Postre cremoso elaborado con arequipe artesanal colombiano. Suave, dulce y con una textura inigualable.',                                                      price:15000, img:'img/postres/arequipe-fusion.avif' },
+      { id:'p6',  name:'Porción torta de zanahoria',  desc:'Torta rústica de zanahoria con frutos secos. Húmeda, esponjosa y con ese sabor especiado que la hace única. ¡Recién llegada al menú!',                        price:17000, img:'img/postres/torta-zanahoria.avif', badge:'new' },
+      { id:'p7',  name:'Brownie con helado',          desc:'Brownie caliente recién salido del horno, acompañado de una bola de helado premium. La combinación perfecta de caliente y frío.',                              price:20000, img:'img/postres/brownie-helado.avif' },
+      { id:'p8',  name:'Genovesa',                    desc:'Bizcocho clásico esponjoso de la casa, con una miga suave y aireada. Ideal para quienes buscan algo ligero y delicado.',                                       price:20000, img:'img/postres/genovesa.avif' },
+      { id:'p9',  name:'Napoleón',                    desc:'Hojaldre en capas crujientes con crema pastelera suave entre cada lámina. Un postre elegante con mucha personalidad.',                                         price:17000, img:'img/postres/napoleon.avif' },
+      { id:'p10', name:'Cuatro Leches',               desc:'Versión más cremosa del tres leches, con una capa adicional de leche condensada. Intenso, húmedo y delicioso.',                                                price:18000, img:'img/postres/cuatro-leches.avif' },
+      { id:'p11', name:'Pie de Limón',                desc:'Base de galleta crujiente, relleno de crema de limón suavemente ácida y cubierto de merengue dorado. Equilibrio perfecto.',                                   price:18000, img:'img/postres/pie-limon.avif' },
+      { id:'p12', name:'Flan de Caramelo',            desc:'Flan suave y sedoso bañado en caramelo dorado. Preparado con la receta tradicional de la casa, sin complicaciones y lleno de sabor.',                         price:18000, img:'img/postres/flan-caramelo.avif' },
+      { id:'p13', name:'Porción de Torta Fría',       desc:'Porción individual de la torta fría de la casa. Capas de galleta, crema y sabor en cada bocado. No necesita horno.',                                          price:17000, img:'img/postres/torta-fria.avif' },
+      { id:'p14', name:'Torta amapola y yogurt',      desc:'Bizcocho con semillas de amapola y base de yogurt natural. Esponjoso, aromático y con un sabor suave y diferente.',                                           price:15000, img:'img/postres/torta-amapola.avif' },
+      { id:'p15', name:'Fresas con crema',            desc:'Crema de la casa preparada diariamente, acompañada de trozos de fresa fresca. Clásico y refrescante.',                                                        price:22000, img:'img/postres/fresas-crema.avif' },
+      { id:'p16', name:'Raspao MD',                   desc:'El clásico raspao colombiano con toppings especiales de Mundo Delis: sirope, leche condensada y frutas. Perfecto para el calor.',                             price:18000, img:'img/postres/raspao.avif' },
+      { id:'p17', name:'Cremoso de Brownie',          desc:'Postre en copa con capas de crema suave y trozos de brownie. Dulce, cremoso y con la textura perfecta en cada cucharada.',                                    price:15000, img:'img/postres/cremoso-brownie.avif' },
     ]
   },
   panaderia: { title:'Panadería',           icon:'ti-bread',  prods:[] },
@@ -94,7 +95,8 @@ function init() {
 
   document.getElementById('detail-content').innerHTML = `
     <div class="detail-hero">
-      <i class="ti ${prod.icon}" aria-hidden="true"></i>
+      <img src="${prod.img}" alt="${prod.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <i class="ti ${cat.icon}" aria-hidden="true" style="display:none"></i>
     </div>
     <div class="detail-body">
       <div class="detail-name">${prod.name}</div>

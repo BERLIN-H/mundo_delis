@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Domicilios — Mundo Delis</title>
+<link rel="icon" href="img/logo.avif" type="image/avif">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
@@ -16,7 +17,7 @@
   <div class="top-bar">
     <a href="index.html" class="back-btn" aria-label="Volver"><i class="ti ti-arrow-left"></i></a>
     <span class="top-title">Domicilios</span>
-    <div class="top-logo"><i class="ti ti-rosette"></i></div>
+    <div class="top-logo"><img src="img/logo.avif" alt="Logo" class="top-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><i class="ti ti-rosette" style="display:none"></i></div>
   </div>
 
   <div class="dom-hero">
@@ -104,31 +105,31 @@
 // ── DATA ──
 const CATALOG = [
   { cat:'Galletería', prods:[
-    { id:'g1', name:'Merengues',               price:12000 },
-    { id:'g2', name:'Brownies',                price:8000  },
-    { id:'g3', name:'Pavlovas',                price:10000 },
-    { id:'g4', name:'Alfajores',               price:3500  },
-    { id:'g5', name:'Galletas de mantequilla', price:10000 },
-    { id:'g6', name:'New York cookies',        price:5000  },
+    { id:'g1', name:'Merengues',               price:12000, img:'img/galleteria/merengues.avif' },
+    { id:'g2', name:'Brownies',                price:8000,  img:'img/galleteria/brownies.avif' },
+    { id:'g3', name:'Pavlovas',                price:10000, img:'img/galleteria/pavlovas.avif' },
+    { id:'g4', name:'Alfajores',               price:3500,  img:'img/galleteria/alfajores.avif' },
+    { id:'g5', name:'Galletas de mantequilla', price:10000, img:'img/galleteria/galletas-mantequilla.avif' },
+    { id:'g6', name:'New York cookies',        price:5000,  img:'img/galleteria/new-york-cookies.avif' },
   ]},
   { cat:'Postres', prods:[
-    { id:'p1',  name:'Tarta de Queso',            price:22000 },
-    { id:'p2',  name:'Crema con durazno',          price:20000 },
-    { id:'p3',  name:'Tres Leches Tradicional',    price:20000 },
-    { id:'p4',  name:'Arroz con Leche',            price:15000 },
-    { id:'p5',  name:'Arequipe Fusión',            price:15000 },
-    { id:'p6',  name:'Porción torta de zanahoria', price:17000 },
-    { id:'p7',  name:'Brownie con helado',         price:20000 },
-    { id:'p8',  name:'Genovesa',                   price:20000 },
-    { id:'p9',  name:'Napoleón',                   price:17000 },
-    { id:'p10', name:'Cuatro Leches',              price:18000 },
-    { id:'p11', name:'Pie de Limón',               price:18000 },
-    { id:'p12', name:'Flan de Caramelo',           price:18000 },
-    { id:'p13', name:'Porción de Torta Fría',      price:17000 },
-    { id:'p14', name:'Torta amapola y yogurt',     price:15000 },
-    { id:'p15', name:'Fresas con crema',           price:22000 },
-    { id:'p16', name:'Raspao MD',                  price:18000 },
-    { id:'p17', name:'Cremoso de Brownie',         price:15000 },
+    { id:'p1',  name:'Tarta de Queso',            price:22000, img:'img/postres/tarta-queso.avif' },
+    { id:'p2',  name:'Crema con durazno',          price:20000, img:'img/postres/crema-durazno.avif' },
+    { id:'p3',  name:'Tres Leches Tradicional',    price:20000, img:'img/postres/tres-leches.avif' },
+    { id:'p4',  name:'Arroz con Leche',            price:15000, img:'img/postres/arroz-leche.avif' },
+    { id:'p5',  name:'Arequipe Fusión',            price:15000, img:'img/postres/arequipe-fusion.avif' },
+    { id:'p6',  name:'Porción torta de zanahoria', price:17000, img:'img/postres/torta-zanahoria.avif' },
+    { id:'p7',  name:'Brownie con helado',         price:20000, img:'img/postres/brownie-helado.avif' },
+    { id:'p8',  name:'Genovesa',                   price:20000, img:'img/postres/genovesa.avif' },
+    { id:'p9',  name:'Napoleón',                   price:17000, img:'img/postres/napoleon.avif' },
+    { id:'p10', name:'Cuatro Leches',              price:18000, img:'img/postres/cuatro-leches.avif' },
+    { id:'p11', name:'Pie de Limón',               price:18000, img:'img/postres/pie-limon.avif' },
+    { id:'p12', name:'Flan de Caramelo',           price:18000, img:'img/postres/flan-caramelo.avif' },
+    { id:'p13', name:'Porción de Torta Fría',      price:17000, img:'img/postres/torta-fria.avif' },
+    { id:'p14', name:'Torta amapola y yogurt',     price:15000, img:'img/postres/torta-amapola.avif' },
+    { id:'p15', name:'Fresas con crema',           price:22000, img:'img/postres/fresas-crema.avif' },
+    { id:'p16', name:'Raspao MD',                  price:18000, img:'img/postres/raspao.avif' },
+    { id:'p17', name:'Cremoso de Brownie',         price:15000, img:'img/postres/cremoso-brownie.avif' },
   ]},
 ];
 
@@ -143,10 +144,13 @@ function openPicker() {
   body.innerHTML = CATALOG.map(group => `
     <div class="picker-cat-title">${group.cat}</div>
     ${group.prods.map(p => `
-      <div class="picker-item" onclick="addProduct('${p.id}','${p.name.replace(/'/g,"\\'")}',${p.price})">
-        <div>
-          <div class="picker-item-name">${p.name}</div>
-          <div class="picker-item-price">${fmt(p.price)}</div>
+      <div class="picker-item" onclick="addProduct('${p.id}','${p.name.replace(/'/g,"\\'")}',${p.price},'${p.img}')">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <img src="${p.img}" alt="${p.name}" class="picker-thumb" onerror="this.style.display='none'">
+          <div>
+            <div class="picker-item-name">${p.name}</div>
+            <div class="picker-item-price">${fmt(p.price)}</div>
+          </div>
         </div>
         <button class="picker-item-add" aria-label="Agregar ${p.name}">+</button>
       </div>`).join('')}
@@ -162,10 +166,10 @@ function closePickerOuter(e) {
   if (e.target === document.getElementById('overlay')) closePicker();
 }
 
-function addProduct(id, name, price) {
+function addProduct(id, name, price, img) {
   const ex = pedido.find(x => x.id === id);
   if (ex) { ex.qty++; }
-  else     { pedido.push({ id, name, price, qty: 1 }); }
+  else     { pedido.push({ id, name, price, img, qty: 1 }); }
   renderPedido();
   closePicker();
 }
@@ -183,6 +187,7 @@ function renderPedido() {
 
   sel.innerHTML = pedido.map((item, i) => `
     <div class="prod-sel-item">
+      <img src="${item.img}" alt="${item.name}" class="sel-thumb" onerror="this.style.display='none'">
       <span>${item.name}</span>
       <div class="sel-qty-row">
         <button class="sel-qty-btn" onclick="changeQty(${i},-1)" aria-label="Quitar uno">−</button>

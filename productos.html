@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Productos — Mundo Delis</title>
+<link rel="icon" href="img/logo.avif" type="image/avif">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
@@ -16,7 +17,7 @@
   <div class="top-bar">
     <a href="menu.html" class="back-btn" aria-label="Volver"><i class="ti ti-arrow-left"></i></a>
     <span class="top-title" id="top-title">Cargando...</span>
-    <div class="top-logo"><i class="ti ti-rosette"></i></div>
+    <div class="top-logo"><img src="img/logo.avif" alt="Logo" class="top-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><i class="ti ti-rosette" style="display:none"></i></div>
   </div>
 
   <div id="cat-header-wrap"></div>
@@ -31,35 +32,35 @@ const CATS = {
     title: 'Galletería', icon: 'ti-cookie',
     desc: 'Galletas, merengues y delicias horneadas',
     prods: [
-      { id:'g1', name:'Merengues', desc:'x80gr. — crujientes por fuera, suaves por dentro', price:12000, icon:'ti-cookie' },
-      { id:'g2', name:'Brownies', desc:'Húmedos y con borde crocante', price:8000, icon:'ti-cookie', badge:'rec' },
-      { id:'g3', name:'Pavlovas', desc:'Base de merengue con frutas frescas', price:10000, icon:'ti-cookie' },
-      { id:'g4', name:'Alfajores', desc:'Clásico relleno de arequipe', price:3500, icon:'ti-cookie' },
-      { id:'g5', name:'Galletas de mantequilla', desc:'Con punto de bocadillo — x13 galletas', price:10000, icon:'ti-cookie' },
-      { id:'g6', name:'New York cookies', desc:'Galletas de chips de chocolate', price:5000, icon:'ti-cookie' },
+      { id:'g1', name:'Merengues',              desc:'x80gr. — crujientes por fuera, suaves por dentro', price:12000, img:'img/galleteria/merengues.avif' },
+      { id:'g2', name:'Brownies',               desc:'Húmedos y con borde crocante', price:8000, img:'img/galleteria/brownies.avif', badge:'rec' },
+      { id:'g3', name:'Pavlovas',               desc:'Base de merengue con frutas frescas', price:10000, img:'img/galleteria/Pavlovas.avif' },
+      { id:'g4', name:'Alfajores',              desc:'Clásico relleno de arequipe', price:3500, img:'img/galleteria/alfajores.avif' },
+      { id:'g5', name:'Galletas de mantequilla',desc:'Con punto de bocadillo — x13 galletas', price:10000, img:'img/galleteria/galletas-mantequilla.avif' },
+      { id:'g6', name:'New York cookies',       desc:'Galletas de chips de chocolate', price:5000, img:'img/galleteria/new-york-cookies.avif' },
     ]
   },
   postres: {
     title: 'Postres', icon: 'ti-ice-cream',
     desc: 'Porciones y postres de la casa',
     prods: [
-      { id:'p1',  name:'Tarta de Queso',             desc:'Cremoso cheesecake horneado al estilo artesanal',                price:22000, icon:'ti-ice-cream' },
-      { id:'p2',  name:'Crema con durazno',           desc:'Crema de la casa con trozos de durazno natural',                price:20000, icon:'ti-ice-cream', badge:'new' },
-      { id:'p3',  name:'Tres Leches Tradicional',     desc:'Bizcocho bañado en tres leches, suave y cremoso',               price:20000, icon:'ti-ice-cream' },
-      { id:'p4',  name:'Arroz con Leche',             desc:'Receta tradicional de la casa, con canela',                     price:15000, icon:'ti-ice-cream' },
-      { id:'p5',  name:'Arequipe Fusión',             desc:'Postre cremoso de arequipe artesanal',                          price:15000, icon:'ti-ice-cream' },
-      { id:'p6',  name:'Porción torta de zanahoria',  desc:'Torta rústica con frutos secos',                                price:17000, icon:'ti-ice-cream', badge:'new' },
-      { id:'p7',  name:'Brownie con helado',          desc:'Brownie caliente con bola de helado premium',                   price:20000, icon:'ti-ice-cream' },
-      { id:'p8',  name:'Genovesa',                    desc:'Bizcocho clásico esponjoso de la casa',                         price:20000, icon:'ti-ice-cream' },
-      { id:'p9',  name:'Napoleón',                    desc:'Hojaldre en capas con crema pastelera',                         price:17000, icon:'ti-ice-cream' },
-      { id:'p10', name:'Cuatro Leches',               desc:'Más cremoso que el tres leches, con leche condensada extra',    price:18000, icon:'ti-ice-cream' },
-      { id:'p11', name:'Pie de Limón',                desc:'Base de galleta con crema de limón y merengue',                 price:18000, icon:'ti-ice-cream' },
-      { id:'p12', name:'Flan de Caramelo',            desc:'Suave flan bañado en caramelo dorado',                         price:18000, icon:'ti-ice-cream' },
-      { id:'p13', name:'Porción de Torta Fría',       desc:'Porción individual de nuestra torta fría de la casa',           price:17000, icon:'ti-ice-cream' },
-      { id:'p14', name:'Torta amapola y yogurt',      desc:'Toque floral con base de yogurt natural',                      price:15000, icon:'ti-ice-cream' },
-      { id:'p15', name:'Fresas con crema',            desc:'Crema de la casa con trozos de fresa fresca',                  price:22000, icon:'ti-ice-cream' },
-      { id:'p16', name:'Raspao MD',                   desc:'El clásico raspao con toppings especiales de la casa',          price:18000, icon:'ti-ice-cream' },
-      { id:'p17', name:'Cremoso de Brownie',          desc:'Postre cremoso en copa con trozos de brownie',                  price:15000, icon:'ti-ice-cream' },
+      { id:'p1',  name:'Tarta de Queso',             desc:'Cremoso cheesecake horneado al estilo artesanal',                price:22000, img:'img/postres/tarta-queso.avif' },
+      { id:'p2',  name:'Crema con durazno',           desc:'Crema de la casa con trozos de durazno natural',                price:20000, img:'img/postres/crema-durazno.avif', badge:'new' },
+      { id:'p3',  name:'Tres Leches Tradicional',     desc:'Bizcocho bañado en tres leches, suave y cremoso',               price:20000, img:'img/postres/tres-leches.avif' },
+      { id:'p4',  name:'Arroz con Leche',             desc:'Receta tradicional de la casa, con canela',                     price:15000, img:'img/postres/arroz-leche.avif' },
+      { id:'p5',  name:'Arequipe Fusión',             desc:'Postre cremoso de arequipe artesanal',                          price:15000, img:'img/postres/arequipe-fusion.avif' },
+      { id:'p6',  name:'Porción torta de zanahoria',  desc:'Torta rústica con frutos secos',                                price:17000, img:'img/postres/torta-zanahoria.avif', badge:'new' },
+      { id:'p7',  name:'Brownie con helado',          desc:'Brownie caliente con bola de helado premium',                   price:20000, img:'img/postres/brownie-helado.avif' },
+      { id:'p8',  name:'Genovesa',                    desc:'Bizcocho clásico esponjoso de la casa',                         price:20000, img:'img/postres/genovesa.avif' },
+      { id:'p9',  name:'Napoleón',                    desc:'Hojaldre en capas con crema pastelera',                         price:17000, img:'img/postres/napoleon.avif' },
+      { id:'p10', name:'Cuatro Leches',               desc:'Más cremoso que el tres leches, con leche condensada extra',    price:18000, img:'img/postres/cuatro-leches.avif' },
+      { id:'p11', name:'Pie de Limón',                desc:'Base de galleta con crema de limón y merengue',                 price:18000, img:'img/postres/pie-limon.avif' },
+      { id:'p12', name:'Flan de Caramelo',            desc:'Suave flan bañado en caramelo dorado',                         price:18000, img:'img/postres/flan-caramelo.avif' },
+      { id:'p13', name:'Porción de Torta Fría',       desc:'Porción individual de nuestra torta fría de la casa',           price:17000, img:'img/postres/torta-fria.avif' },
+      { id:'p14', name:'Torta amapola y yogurt',      desc:'Toque floral con base de yogurt natural',                      price:15000, img:'img/postres/torta-amapola.avif' },
+      { id:'p15', name:'Fresas con crema',            desc:'Crema de la casa con trozos de fresa fresca',                  price:22000, img:'img/postres/fresas-crema.avif' },
+      { id:'p16', name:'Raspao MD',                   desc:'El clásico raspao con toppings especiales de la casa',          price:18000, img:'img/postres/raspao.avif' },
+      { id:'p17', name:'Cremoso de Brownie',          desc:'Postre cremoso en copa con trozos de brownie',                  price:15000, img:'img/postres/cremoso-brownie.avif' },
     ]
   },
   panaderia: { title:'Panadería',            icon:'ti-bread',   desc:'',  prods:[] },
@@ -112,7 +113,10 @@ function init() {
 
   list.innerHTML = cat.prods.map(p => `
     <a class="prod-item" href="detalle.html?cat=${key}&id=${p.id}">
-      <div class="prod-thumb"><i class="ti ${p.icon}" aria-hidden="true"></i></div>
+      <div class="prod-thumb">
+        <img src="${p.img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <i class="ti ${cat.icon}" aria-hidden="true" style="display:none"></i>
+      </div>
       <div class="prod-info">
         <div class="prod-name">${p.name}${p.badge ? badgeHtml(p.badge) : ''}</div>
         <div class="prod-desc">${p.desc}</div>
