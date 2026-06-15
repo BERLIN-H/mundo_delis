@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Domicilios — Mundo Delis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="page dom-page">
+
+  <div class="top-bar">
+    <a href="index.html" class="back-btn" aria-label="Volver"><i class="ti ti-arrow-left"></i></a>
+    <span class="top-title">Domicilios</span>
+    <div class="top-logo"><i class="ti ti-rosette"></i></div>
+  </div>
+
+  <div class="dom-hero">
+    <i class="ti ti-motorbike" aria-hidden="true"></i>
+    <h2>Pedidos a domicilio</h2>
+    <p>Completa el formulario y te enviamos el resumen por WhatsApp</p>
+  </div>
+
+  <div class="dom-form-wrap">
+
+    <!-- Info horario -->
+    <div class="dom-card">
+      <h3><i class="ti ti-clock" aria-hidden="true"></i> Horario de domicilios</h3>
+      <div class="info-row"><i class="ti ti-calendar"></i><span>Lunes – Viernes: 8:00am – 8:00pm</span></div>
+      <div class="info-row"><i class="ti ti-calendar"></i><span>Sábado – Domingo: 9:00am – 6:00pm</span></div>
+      <div class="info-row"><i class="ti ti-map-pin"></i><span>Cobertura dentro de Riohacha</span></div>
+    </div>
+
+    <!-- Datos personales -->
+    <div class="dom-card">
+      <h3><i class="ti ti-user" aria-hidden="true"></i> Tus datos</h3>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label class="form-label" for="inp-nombre">Nombre completo *</label>
+        <input class="form-input" id="inp-nombre" type="text" placeholder="Ej: María García" autocomplete="name">
+      </div>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label class="form-label" for="inp-tel">Teléfono / WhatsApp *</label>
+        <input class="form-input" id="inp-tel" type="tel" placeholder="Ej: 300 123 4567" autocomplete="tel">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inp-dir">Dirección de entrega *</label>
+        <input class="form-input" id="inp-dir" type="text" placeholder="Calle, barrio, referencia..." autocomplete="street-address">
+      </div>
+    </div>
+
+    <!-- Productos -->
+    <div class="dom-card">
+      <h3><i class="ti ti-shopping-bag" aria-hidden="true"></i> Tu pedido</h3>
+      <div class="prod-selector" id="prod-selector">
+        <div class="empty-sel" style="font-size:13px;color:var(--text-soft);text-align:center;padding:12px 0;">
+          Aún no has agregado productos
+        </div>
+      </div>
+      <button class="add-prod-btn" style="margin-top:10px;" onclick="openPicker()">
+        <i class="ti ti-plus" aria-hidden="true"></i> Agregar producto
+      </button>
+      <div id="total-row" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--cream-b);display:flex;justify-content:space-between;align-items:baseline;">
+        <span style="font-size:13px;color:var(--text-soft);">Total estimado</span>
+        <span id="total-val" style="font-family:'Playfair Display',serif;font-size:20px;color:var(--gold);"></span>
+      </div>
+    </div>
+
+    <!-- Nota adicional -->
+    <div class="dom-card">
+      <h3><i class="ti ti-notes" aria-hidden="true"></i> Nota adicional</h3>
+      <textarea class="form-textarea" id="inp-nota" placeholder="Alergias, preferencias de decoración, hora de entrega..."></textarea>
+    </div>
+
+    <!-- Botón enviar -->
+    <button class="send-btn" id="send-btn" onclick="enviar()">
+      <i class="ti ti-brand-whatsapp" aria-hidden="true"></i> Enviar pedido por WhatsApp
+    </button>
+
+    <p style="font-size:11px;color:var(--text-soft);text-align:center;padding:0 8px 4px;">
+      Al enviar se abrirá WhatsApp con el resumen de tu pedido listo para enviar.
+    </p>
+
+  </div>
+
+  <div class="pb"></div>
+</div>
+
+<!-- PRODUCT PICKER MODAL -->
+<div class="overlay" id="overlay" onclick="closePickerOuter(event)">
+  <div class="picker-sheet" id="picker-sheet">
+    <div class="picker-header">
+      <h3>Seleccionar producto</h3>
+      <button class="picker-close" onclick="closePicker()" aria-label="Cerrar"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="picker-body"></div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const CATALOG = [
+  { cat:'Galletería', prods:[
+    { id:'g1', name:'Merengues',               price:12000 },
+    { id:'g2', name:'Brownies',                price:8000  },
+    { id:'g3', name:'Pavlovas',                price:10000 },
+    { id:'g4', name:'Alfajores',               price:3500  },
+    { id:'g5', name:'Galletas de mantequilla', price:10000 },
+    { id:'g6', name:'New York cookies',        price:5000  },
+  ]},
+  { cat:'Postres', prods:[
+    { id:'p1',  name:'Tarta de Queso',            price:22000 },
+    { id:'p2',  name:'Crema con durazno',          price:20000 },
+    { id:'p3',  name:'Tres Leches Tradicional',    price:20000 },
+    { id:'p4',  name:'Arroz con Leche',            price:15000 },
+    { id:'p5',  name:'Arequipe Fusión',            price:15000 },
+    { id:'p6',  name:'Porción torta de zanahoria', price:17000 },
+    { id:'p7',  name:'Brownie con helado',         price:20000 },
+    { id:'p8',  name:'Genovesa',                   price:20000 },
+    { id:'p9',  name:'Napoleón',                   price:17000 },
+    { id:'p10', name:'Cuatro Leches',              price:18000 },
+    { id:'p11', name:'Pie de Limón',               price:18000 },
+    { id:'p12', name:'Flan de Caramelo',           price:18000 },
+    { id:'p13', name:'Porción de Torta Fría',      price:17000 },
+    { id:'p14', name:'Torta amapola y yogurt',     price:15000 },
+    { id:'p15', name:'Fresas con crema',           price:22000 },
+    { id:'p16', name:'Raspao MD',                  price:18000 },
+    { id:'p17', name:'Cremoso de Brownie',         price:15000 },
+  ]},
+];
+
+// ── STATE ──
+let pedido = []; // [{ id, name, price, qty }]
+
+function fmt(n) { return '$' + n.toLocaleString('es-CO'); }
+
+// ── PICKER ──
+function openPicker() {
+  const body = document.getElementById('picker-body');
+  body.innerHTML = CATALOG.map(group => `
+    <div class="picker-cat-title">${group.cat}</div>
+    ${group.prods.map(p => `
+      <div class="picker-item" onclick="addProduct('${p.id}','${p.name.replace(/'/g,"\\'")}',${p.price})">
+        <div>
+          <div class="picker-item-name">${p.name}</div>
+          <div class="picker-item-price">${fmt(p.price)}</div>
+        </div>
+        <button class="picker-item-add" aria-label="Agregar ${p.name}">+</button>
+      </div>`).join('')}
+  `).join('');
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closePicker() {
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function closePickerOuter(e) {
+  if (e.target === document.getElementById('overlay')) closePicker();
+}
+
+function addProduct(id, name, price) {
+  const ex = pedido.find(x => x.id === id);
+  if (ex) { ex.qty++; }
+  else     { pedido.push({ id, name, price, qty: 1 }); }
+  renderPedido();
+  closePicker();
+}
+
+// ── PEDIDO RENDER ──
+function renderPedido() {
+  const sel = document.getElementById('prod-selector');
+  const totalRow = document.getElementById('total-row');
+
+  if (!pedido.length) {
+    sel.innerHTML = '<div class="empty-sel" style="font-size:13px;color:var(--text-soft);text-align:center;padding:12px 0;">Aún no has agregado productos</div>';
+    totalRow.style.display = 'none';
+    return;
+  }
+
+  sel.innerHTML = pedido.map((item, i) => `
+    <div class="prod-sel-item">
+      <span>${item.name}</span>
+      <div class="sel-qty-row">
+        <button class="sel-qty-btn" onclick="changeQty(${i},-1)" aria-label="Quitar uno">−</button>
+        <span class="sel-qty-val">${item.qty}</span>
+        <button class="sel-qty-btn" onclick="changeQty(${i},1)" aria-label="Agregar uno">+</button>
+      </div>
+      <span style="font-size:13px;color:var(--gold);min-width:64px;text-align:right;">${fmt(item.price * item.qty)}</span>
+      <button class="sel-remove" onclick="removeItem(${i})" aria-label="Eliminar ${item.name}">
+        <i class="ti ti-trash" aria-hidden="true"></i>
+      </button>
+    </div>`).join('');
+
+  const total = pedido.reduce((a, x) => a + x.price * x.qty, 0);
+  document.getElementById('total-val').textContent = fmt(total);
+  totalRow.style.display = 'flex';
+}
+
+function changeQty(i, d) {
+  pedido[i].qty = Math.max(1, pedido[i].qty + d);
+  renderPedido();
+}
+
+function removeItem(i) {
+  pedido.splice(i, 1);
+  renderPedido();
+}
+
+// ── ENVIAR ──
+function enviar() {
+  const nombre = document.getElementById('inp-nombre').value.trim();
+  const tel    = document.getElementById('inp-tel').value.trim();
+  const dir    = document.getElementById('inp-dir').value.trim();
+  const nota   = document.getElementById('inp-nota').value.trim();
+
+  if (!nombre) { alert('Por favor ingresa tu nombre.'); return; }
+  if (!tel)    { alert('Por favor ingresa tu teléfono.'); return; }
+  if (!dir)    { alert('Por favor ingresa la dirección de entrega.'); return; }
+  if (!pedido.length) { alert('Agrega al menos un producto a tu pedido.'); return; }
+
+  const total = pedido.reduce((a, x) => a + x.price * x.qty, 0);
+
+  const lines = pedido.map(x =>
+    `  • ${x.name} x${x.qty} — ${fmt(x.price * x.qty)}`
+  ).join('%0A');
+
+  let msg =
+    `🍰 *Nuevo pedido — Mundo Delis*%0A%0A` +
+    `👤 *Nombre:* ${nombre}%0A` +
+    `📞 *Teléfono:* ${tel}%0A` +
+    `📍 *Dirección:* ${dir}%0A%0A` +
+    `🛍️ *Pedido:*%0A${lines}%0A%0A` +
+    `💰 *Total estimado:* ${fmt(total)}`;
+
+  if (nota) msg += `%0A%0A📝 *Nota:* ${nota}`;
+
+  // ← Reemplaza con el número real de WhatsApp del negocio (formato internacional sin +)
+  const WA_NUMBER = '573242601994';
+  window.location.href = `https://wa.me/${WA_NUMBER}?text=${msg}`;
+}
+</script>
+
+</body>
+</html>

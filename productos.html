@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Productos — Mundo Delis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="page prod-list-page">
+
+  <div class="top-bar">
+    <a href="menu.html" class="back-btn" aria-label="Volver"><i class="ti ti-arrow-left"></i></a>
+    <span class="top-title" id="top-title">Cargando...</span>
+    <div class="top-logo"><i class="ti ti-rosette"></i></div>
+  </div>
+
+  <div id="cat-header-wrap"></div>
+  <div id="prod-list"></div>
+  <div class="pb"></div>
+
+</div>
+
+<script>
+const CATS = {
+  galleteria: {
+    title: 'Galletería', icon: 'ti-cookie',
+    desc: 'Galletas, merengues y delicias horneadas',
+    prods: [
+      { id:'g1', name:'Merengues', desc:'x80gr. — crujientes por fuera, suaves por dentro', price:12000, icon:'ti-cookie' },
+      { id:'g2', name:'Brownies', desc:'Húmedos y con borde crocante', price:8000, icon:'ti-cookie', badge:'rec' },
+      { id:'g3', name:'Pavlovas', desc:'Base de merengue con frutas frescas', price:10000, icon:'ti-cookie' },
+      { id:'g4', name:'Alfajores', desc:'Clásico relleno de arequipe', price:3500, icon:'ti-cookie' },
+      { id:'g5', name:'Galletas de mantequilla', desc:'Con punto de bocadillo — x13 galletas', price:10000, icon:'ti-cookie' },
+      { id:'g6', name:'New York cookies', desc:'Galletas de chips de chocolate', price:5000, icon:'ti-cookie' },
+    ]
+  },
+  postres: {
+    title: 'Postres', icon: 'ti-ice-cream',
+    desc: 'Porciones y postres de la casa',
+    prods: [
+      { id:'p1',  name:'Tarta de Queso',             desc:'Cremoso cheesecake horneado al estilo artesanal',                price:22000, icon:'ti-ice-cream' },
+      { id:'p2',  name:'Crema con durazno',           desc:'Crema de la casa con trozos de durazno natural',                price:20000, icon:'ti-ice-cream', badge:'new' },
+      { id:'p3',  name:'Tres Leches Tradicional',     desc:'Bizcocho bañado en tres leches, suave y cremoso',               price:20000, icon:'ti-ice-cream' },
+      { id:'p4',  name:'Arroz con Leche',             desc:'Receta tradicional de la casa, con canela',                     price:15000, icon:'ti-ice-cream' },
+      { id:'p5',  name:'Arequipe Fusión',             desc:'Postre cremoso de arequipe artesanal',                          price:15000, icon:'ti-ice-cream' },
+      { id:'p6',  name:'Porción torta de zanahoria',  desc:'Torta rústica con frutos secos',                                price:17000, icon:'ti-ice-cream', badge:'new' },
+      { id:'p7',  name:'Brownie con helado',          desc:'Brownie caliente con bola de helado premium',                   price:20000, icon:'ti-ice-cream' },
+      { id:'p8',  name:'Genovesa',                    desc:'Bizcocho clásico esponjoso de la casa',                         price:20000, icon:'ti-ice-cream' },
+      { id:'p9',  name:'Napoleón',                    desc:'Hojaldre en capas con crema pastelera',                         price:17000, icon:'ti-ice-cream' },
+      { id:'p10', name:'Cuatro Leches',               desc:'Más cremoso que el tres leches, con leche condensada extra',    price:18000, icon:'ti-ice-cream' },
+      { id:'p11', name:'Pie de Limón',                desc:'Base de galleta con crema de limón y merengue',                 price:18000, icon:'ti-ice-cream' },
+      { id:'p12', name:'Flan de Caramelo',            desc:'Suave flan bañado en caramelo dorado',                         price:18000, icon:'ti-ice-cream' },
+      { id:'p13', name:'Porción de Torta Fría',       desc:'Porción individual de nuestra torta fría de la casa',           price:17000, icon:'ti-ice-cream' },
+      { id:'p14', name:'Torta amapola y yogurt',      desc:'Toque floral con base de yogurt natural',                      price:15000, icon:'ti-ice-cream' },
+      { id:'p15', name:'Fresas con crema',            desc:'Crema de la casa con trozos de fresa fresca',                  price:22000, icon:'ti-ice-cream' },
+      { id:'p16', name:'Raspao MD',                   desc:'El clásico raspao con toppings especiales de la casa',          price:18000, icon:'ti-ice-cream' },
+      { id:'p17', name:'Cremoso de Brownie',          desc:'Postre cremoso en copa con trozos de brownie',                  price:15000, icon:'ti-ice-cream' },
+    ]
+  },
+  panaderia: { title:'Panadería',            icon:'ti-bread',   desc:'',  prods:[] },
+  bebidas:   { title:'Bebidas y malteadas',  icon:'ti-glass',   desc:'',  prods:[] },
+  waffles:   { title:'Waffles',              icon:'ti-waffle',  desc:'',  prods:[] },
+  vinos:     { title:'Vinos & Cafés',        icon:'ti-bottle',  desc:'',  prods:[] },
+  saludable: { title:'Línea saludable',      icon:'ti-leaf',    desc:'',  prods:[] },
+  empaques:  { title:'Empaques y tarjetas',  icon:'ti-gift',    desc:'',  prods:[] },
+};
+
+function fmt(n) {
+  return '$' + n.toLocaleString('es-CO');
+}
+
+function badgeHtml(b) {
+  if (b === 'new') return '<span class="badge-new">Nuevo</span>';
+  if (b === 'rec') return '<span class="badge-rec">⭐ Recomendado</span>';
+  return '';
+}
+
+function init() {
+  const params = new URLSearchParams(location.search);
+  const key    = params.get('cat') || 'galleteria';
+  const cat    = CATS[key] || CATS['galleteria'];
+
+  document.title = cat.title + ' — Mundo Delis';
+  document.getElementById('top-title').textContent = cat.title;
+
+  // Category header
+  document.getElementById('cat-header-wrap').innerHTML = `
+    <div class="cat-header">
+      <div class="cat-header-icon"><i class="ti ${cat.icon}" aria-hidden="true"></i></div>
+      <div class="cat-header-text">
+        <h2>${cat.title}</h2>
+        ${cat.desc ? `<p>${cat.desc}</p>` : ''}
+      </div>
+    </div>`;
+
+  const list = document.getElementById('prod-list');
+
+  if (!cat.prods.length) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <i class="ti ti-clock" aria-hidden="true"></i>
+        <h3>Próximamente</h3>
+        <p>Estamos preparando esta sección<br>con mucho amor 🩷</p>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = cat.prods.map(p => `
+    <a class="prod-item" href="detalle.html?cat=${key}&id=${p.id}">
+      <div class="prod-thumb"><i class="ti ${p.icon}" aria-hidden="true"></i></div>
+      <div class="prod-info">
+        <div class="prod-name">${p.name}${p.badge ? badgeHtml(p.badge) : ''}</div>
+        <div class="prod-desc">${p.desc}</div>
+      </div>
+      <span class="prod-price">${fmt(p.price)}</span>
+    </a>`).join('');
+}
+
+init();
+</script>
+
+</body>
+</html>

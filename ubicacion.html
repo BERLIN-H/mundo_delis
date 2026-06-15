@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ubicación — Mundo Delis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="page loc-page">
+
+  <div class="top-bar">
+    <a href="index.html" class="back-btn" aria-label="Volver"><i class="ti ti-arrow-left"></i></a>
+    <span class="top-title">Ubicación</span>
+    <div class="top-logo"><i class="ti ti-rosette"></i></div>
+  </div>
+
+  <!-- Mapa embebido de Google Maps -->
+  <iframe
+    class="map-embed"
+    src="https://maps.google.com/maps?q=Cl.+13+%2315-151+Riohacha+La+Guajira+Colombia&output=embed&z=16"
+    title="Ubicación de Mundo Delis Repostería"
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+    allowfullscreen>
+  </iframe>
+
+  <div class="loc-card">
+    <div class="loc-name">Mundo Delis Repostería</div>
+    <div class="loc-addr">
+      <i class="ti ti-map-pin" aria-hidden="true"></i>
+      <span>Cl. 13 #15-151, Riohacha, La Guajira, Colombia</span>
+    </div>
+
+    <div class="status-pill" id="status-pill">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-txt">Verificando...</span>
+    </div>
+
+    <div class="schedule-table">
+      <div class="sched-row"><span>Lunes – Viernes</span><span>8:00am – 8:00pm</span></div>
+      <div class="sched-row"><span>Sábado – Domingo</span><span>9:00am – 6:00pm</span></div>
+    </div>
+
+    <div class="loc-btns">
+      <a href="tel:+573000000000" class="btn-call">
+        <i class="ti ti-phone" aria-hidden="true"></i> Llamar
+      </a>
+      <a href="https://maps.google.com/?q=Cl.+13+%2315-151,+Riohacha,+La+Guajira" target="_blank" rel="noopener" class="btn-dir">
+        <i class="ti ti-navigation" aria-hidden="true"></i> Cómo llegar
+      </a>
+    </div>
+  </div>
+
+  <div class="pb"></div>
+</div>
+
+<script>
+// Estado abierto/cerrado según hora Colombia (UTC-5)
+(function () {
+  const now = new Date();
+  const utcH = now.getUTCHours();
+  const utcM = now.getUTCMinutes();
+  const totalMin = (utcH * 60 + utcM) - 5 * 60; // minutos desde medianoche en CO
+  const coMin = ((totalMin % 1440) + 1440) % 1440;
+  const day = (now.getUTCDay() + (totalMin < 0 ? -1 : 0) + 7) % 7; // 0=Dom, 1=Lun…
+
+  let open = false;
+  if (day >= 1 && day <= 5 && coMin >= 480 && coMin < 1200) open = true; // Lun-Vie 8-20h
+  if ((day === 0 || day === 6) && coMin >= 540 && coMin < 1080) open = true; // Sab-Dom 9-18h
+
+  const dot = document.getElementById('status-dot');
+  const txt = document.getElementById('status-txt');
+  dot.className = 'status-dot ' + (open ? 'dot-open' : 'dot-closed');
+  txt.textContent = open ? 'Abierto ahora' : 'Cerrado en este momento';
+})();
+</script>
+
+</body>
+</html>
