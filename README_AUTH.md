@@ -102,16 +102,18 @@ CREATE POLICY "productos_admin_write"
 4. Build settings:
    - Build command: (vacío, no tiene build)
    - Publish directory: `.`
+   - La función serverless vive en `netlify/functions/admin-api.js` (Netlify la detecta sola gracias a `netlify.toml`)
 5. Deploy
 
 ### 4b. Agregar variables de entorno
 En Netlify → Site → **Environment variables → Add variable**:
 
-| Variable               | Valor                                               |
-|------------------------|-----------------------------------------------------|
-| `SUPABASE_URL`         | `https://sylkotirzlhrwybqelis.supabase.co`          |
-| `SUPABASE_ANON_KEY`    | tu `anon` key de Supabase                           |
-| `SUPABASE_SERVICE_KEY` | tu `service_role` key de Supabase ← **PRIVADA**     |
+| Variable                 | Valor                                               |
+|---------------------------|-----------------------------------------------------|
+| `SUPABASE_URL`             | `https://sylkotirzlhrwybqelis.supabase.co`          |
+| `SUPABASE_ANON_KEY`        | tu `anon` key de Supabase                           |
+| `SUPABASE_SERVICE_KEY`     | tu `service_role` key de Supabase ← **PRIVADA**     |
+| `ADMIN_ACTIVATION_CODE`    | tu código secreto de activación ← **PRIVADA, ya NO va en el HTML** |
 
 Después de agregar las variables → **Trigger deploy** para que surtan efecto.
 
@@ -140,14 +142,11 @@ https://mundodelis.netlify.app/admin.html
    - Nombre: tu nombre
    - Correo: tu email
    - Contraseña: mínimo 8 caracteres
-   - Código de activación: `DELIS2026ADMIN`
-4. Confirma el correo si Supabase lo pide
-5. Inicia sesión
+   - Código de activación: el mismo valor que pusiste en `ADMIN_ACTIVATION_CODE` en Netlify
+4. Confirma el correo si Supabase lo pide (si tu proyecto exige confirmación, primero confirma e inicia sesión, y luego vuelve a intentar el registro con el código para que el servidor te promueva)
+5. El servidor valida el código y te asigna `rol: ADMIN` en `app_metadata` — nunca en `user_metadata`, porque ese campo lo puede editar el propio usuario desde el navegador.
 
-> ⚠️ Después de crear tu cuenta, **cambia el código de activación** en `login.html`:
-> ```javascript
-> const ADMIN_ACTIVATION_CODE = 'TU_CODIGO_SECRETO_NUEVO';
-> ```
+> El código de activación ya NO está escrito en ningún archivo del repo. Vive únicamente como variable de entorno en Netlify (`ADMIN_ACTIVATION_CODE`), así que no aparece en el código fuente de la página.
 
 ---
 
@@ -155,27 +154,29 @@ https://mundodelis.netlify.app/admin.html
 
 Si el correo con el que iniciaste sesión en Google **no es el mismo** que registraste con email, el sistema te rechazará (rol no es ADMIN).
 
-Para vincular tu cuenta Google: en Supabase → **Authentication → Users**, busca tu usuario y en `user_metadata` verifica que aparezca `"rol": "ADMIN"`.
+Para vincular tu cuenta Google: en Supabase → **Authentication → Users**, busca tu usuario y verifica su `app_metadata` (no `user_metadata`).
 
 Si usas Google como primer método:
 1. Click en "Continuar con Google"
 2. Supabase crea el usuario automáticamente **sin** el rol ADMIN
-3. En Supabase → Authentication → Users → tu usuario → Edit → `raw_user_meta_data`:
-   ```json
-   { "rol": "ADMIN", "nombre": "Tu Nombre" }
+3. Como la consola de Supabase Studio normalmente solo deja editar `user_metadata` desde la interfaz, para asignar `app_metadata.rol = ADMIN` corre esto en **Supabase → SQL Editor**:
+   ```sql
+   update auth.users
+   set raw_app_meta_data = raw_app_meta_data || '{"rol":"ADMIN"}'::jsonb
+   where email = 'tu_correo@gmail.com';
    ```
-4. Guarda y recarga — ya tienes acceso
+4. Cierra sesión y vuelve a iniciar sesión (o simplemente recarga `/admin.html` — como ahora la verificación usa `getUser()`, no necesitas volver a loguearte; basta con recargar la página para que traiga el rol actualizado del servidor).
 
 ---
 
 ## Archivos que subir al repo
 
 | Archivo                          | Acción              |
-|----------------------------------|---------------------|
-| `admin.html`                     | Reemplazar          |
-| `login.html`                     | Agregar (nuevo)     |
-| `netlify.toml`                   | Agregar (nuevo)     |
-| `netlify/functions/admin-api.js` | Agregar (nuevo)     |
+|-----------------------------------|---------------------|
+| `admin.html`                      | Reemplazar          |
+| `login.html`                      | Reemplazar          |
+| `netlify.toml`                    | Reemplazar          |
+| `netlify/functions/admin-api.js`  | Reemplazar (ruta correcta, antes estaba en la raíz) |
 
 ---
 
@@ -211,4 +212,10 @@ No. Vive solo en las variables de entorno de Netlify. El navegador nunca la reci
 Sí. Cada uno se registra con el código de activación y queda con rol ADMIN.
 
 **¿Qué pasa si cambio el código de activación?**
-Las cuentas ya creadas siguen funcionando. Solo afecta a nuevos registros.
+Las cuentas ya creadas siguen funcionando. Solo afecta a nuevos registros. Para cambiarlo, edita la variable `ADMIN_ACTIVATION_CODE` en Netlify (no hace falta tocar código).
+
+**¿Por qué el rol se guarda en `app_metadata` y no en `user_metadata`?**
+`user_metadata` lo puede modificar el propio usuario desde el navegador (con `supabase.auth.updateUser()`), así que cualquiera podría auto-asignarse el rol ADMIN. `app_metadata` solo se puede escribir desde el servidor con la `service_role` key, por eso es el único lugar confiable para guardar permisos.
+
+**¿Por qué `admin.html` usa `getUser()` en vez de `getSession()`?**
+`getSession()` solo lee la sesión guardada en el navegador (localStorage) sin confirmarla con Supabase; si editas el rol de un usuario después de que inició sesión, `getSession()` seguirá mostrando los datos viejos. `getUser()` sí consulta al servidor y siempre trae el estado actual — por eso es la forma correcta de decidir si alguien entra o no al panel.

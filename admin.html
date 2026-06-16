@@ -499,7 +499,7 @@ async function sbGet(path) {
 // ── VERIFICACIÓN DE SESIÓN AL CARGAR ─────────────────────────
 (async () => {
   // Maneja el callback de OAuth (Google) si hay tokens en la URL
-  const { data: { session }, error } = await sb.auth.getSession();
+  const { data: { session } } = await sb.auth.getSession();
 
   if (!session) {
     // No hay sesión → login
@@ -507,7 +507,18 @@ async function sbGet(path) {
     return;
   }
 
-  const rol = session.user.user_metadata?.rol || session.user.app_metadata?.rol;
+  // getUser() consulta al servidor de Supabase y trae el rol más reciente.
+  // getSession() solo lee la caché local del navegador: si el rol ADMIN
+  // se asignó/editó después de que este token se generó, getSession()
+  // seguiría mostrando los datos viejos y te rebotaría al login.
+  const { data: { user }, error } = await sb.auth.getUser();
+
+  if (error || !user) {
+    window.location.href = '/login.html';
+    return;
+  }
+
+  const rol = user.app_metadata?.rol;
   if (rol !== 'ADMIN') {
     await sb.auth.signOut();
     window.location.href = '/login.html?err=no-admin';
@@ -517,9 +528,9 @@ async function sbGet(path) {
   SESSION = session;
 
   // Mostrar info del usuario en la topbar
-  const email = session.user.email;
-  const name  = session.user.user_metadata?.nombre || session.user.user_metadata?.full_name || email;
-  const avatar= session.user.user_metadata?.avatar_url;
+  const email = user.email;
+  const name  = user.user_metadata?.nombre || user.user_metadata?.full_name || email;
+  const avatar= user.user_metadata?.avatar_url;
 
   document.getElementById('user-email-bar').textContent = name;
   document.getElementById('session-user-label').textContent = email;

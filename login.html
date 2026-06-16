@@ -227,21 +227,32 @@ input:focus { border-color: var(--gold-mid); }
 const SUPABASE_URL  = window.SUPABASE_URL;
 const SUPABASE_ANON = window.SUPABASE_ANON;
 
-// Código secreto para crear cuentas admin (cámbialo por uno tuyo)
-// Este código solo lo conoce el dueño del negocio
-const ADMIN_ACTIVATION_CODE = 'DELIS2026ADMIN';
+// El código de activación YA NO vive aquí — se valida en el servidor
+// (netlify/functions/admin-api.js), para que no quede visible en el
+// código fuente de la página.
 
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
-// ── Si ya hay sesión activa, ir directo al admin ──────────────
+// Si Supabase te devolvió aquí con un error (ej. no eres ADMIN), muéstralo
+(() => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('err') === 'no-admin') {
+    showMsg('Esta cuenta no tiene permisos de administrador.', 'error');
+  }
+})();
+
+// ── Si ya hay sesión activa y es ADMIN, ir directo al admin ───
 (async () => {
   const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    const rol = session.user.user_metadata?.rol || session.user.app_metadata?.rol;
-    if (rol === 'ADMIN') {
-      window.location.href = '/admin.html';
-    }
+  if (!session) return;
+  // getUser() consulta al servidor y trae el rol más reciente —
+  // getSession() solo lee la caché local del navegador, que puede
+  // estar desactualizada si el rol se editó después de iniciar sesión.
+  const { data: { user } } = await sb.auth.getUser();
+  const rol = user?.app_metadata?.rol;
+  if (rol === 'ADMIN') {
+    window.location.href = '/admin.html';
   }
 })();
 
@@ -272,8 +283,8 @@ async function doLogin() {
     return;
   }
 
-  // Verificar rol ADMIN
-  const rol = data.user.user_metadata?.rol || data.user.app_metadata?.rol;
+  // Verificar rol ADMIN (app_metadata = único lugar que el servidor controla)
+  const rol = data.user.app_metadata?.rol;
   if (rol !== 'ADMIN') {
     await sb.auth.signOut();
     showMsg('Esta cuenta no tiene acceso al panel de administración', 'error');
@@ -311,19 +322,17 @@ async function doRegister() {
 
   if (!name || !email || !pwd || !code) { showMsg('Completa todos los campos', 'error'); return; }
   if (pwd.length < 8) { showMsg('La contraseña debe tener mínimo 8 caracteres', 'error'); return; }
-  if (code !== ADMIN_ACTIVATION_CODE) { showMsg('Código de activación incorrecto', 'error'); return; }
 
   setLoading('btn-register', true);
   showMsg('Creando cuenta…', 'loading');
 
+  // El rol ya NO se envía desde aquí — solo el servidor (con la service key)
+  // puede asignar el rol ADMIN, después de validar el código.
   const { data, error } = await sb.auth.signUp({
     email,
     password: pwd,
     options: {
-      data: {
-        nombre: name,
-        rol:    'ADMIN',      // ← rol que verifica la Netlify Function
-      }
+      data: { nombre: name }
     }
   });
 
@@ -333,10 +342,39 @@ async function doRegister() {
     return;
   }
 
-  // Supabase envía un email de confirmación (si está habilitado)
+  // Si tu proyecto exige confirmar el correo, no habrá sesión todavía:
+  // no podemos pedir la promoción a ADMIN sin un token de sesión.
   if (data.user && !data.session) {
-    showMsg('✅ Cuenta creada. Revisa tu correo para confirmar y luego inicia sesión.', 'success');
-  } else if (data.session) {
+    showMsg('✅ Cuenta creada. Revisa tu correo para confirmar, inicia sesión y vuelve a intentarlo con el código.', 'success');
+    setLoading('btn-register', false);
+    return;
+  }
+
+  if (data.session) {
+    showMsg('Verificando código de activación…', 'loading');
+    try {
+      const r = await fetch('/api/admin-api', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'auth.promote',
+          token: data.session.access_token,
+          payload: { code },
+        }),
+      });
+      const json = await r.json();
+      if (!r.ok || json.error) {
+        await sb.auth.signOut();
+        showMsg(json.error || 'Código de activación incorrecto', 'error');
+        setLoading('btn-register', false);
+        return;
+      }
+    } catch (e) {
+      showMsg('No se pudo conectar con el servidor para validar el código', 'error');
+      setLoading('btn-register', false);
+      return;
+    }
+
     showMsg('¡Cuenta creada! Redirigiendo…', 'success');
     setTimeout(() => { window.location.href = '/admin.html'; }, 800);
   }
