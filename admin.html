@@ -460,7 +460,7 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
 <script>
 // ── SUPABASE CONFIG (solo anon key — la service key está en el servidor) ──
 const SUPABASE_URL  = 'https://sylkotirzlhrwybqelis.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5bGtvdGlyemxocnd5YnFlbGlzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTU0Nzg0OCwiZXhwIjoyMDk3MTIzODQ4fQ.xkvZNMJ75ukVrNRxybYmRu3hBaDnqiE4BeQteb2pUV8';      // ✅ pública, de solo lectura
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5bGtvdGlyemxocnd5YnFlbGlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDc4NDgsImV4cCI6MjA5NzEyMzg0OH0.ZabkKV_X_XizS-c1ZUkWFGZ9xIaHjaW9gzuVrn3v0Kg';
 
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -502,14 +502,16 @@ async function sbGet(path) {
   const { data: { session }, error } = await sb.auth.getSession();
 
   if (!session) {
-  alert('NO HAY SESION');
-  return;
+    // No hay sesión → login
+    window.location.href = '/login.html';
+    return;
   }
 
   const rol = session.user.user_metadata?.rol || session.user.app_metadata?.rol;
   if (rol !== 'ADMIN') {
-  alert('ROL DETECTADO: ' + rol);
-  return;
+    await sb.auth.signOut();
+    window.location.href = '/login.html?err=no-admin';
+    return;
   }
 
   SESSION = session;
