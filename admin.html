@@ -502,16 +502,14 @@ async function sbGet(path) {
   const { data: { session }, error } = await sb.auth.getSession();
 
   if (!session) {
-    // No hay sesión → login
-    window.location.href = '/login.html';
-    return;
+  alert('NO HAY SESION');
+  return;
   }
 
   const rol = session.user.user_metadata?.rol || session.user.app_metadata?.rol;
   if (rol !== 'ADMIN') {
-    await sb.auth.signOut();
-    window.location.href = '/login.html?err=no-admin';
-    return;
+  alert('ROL DETECTADO: ' + rol);
+  return;
   }
 
   SESSION = session;
