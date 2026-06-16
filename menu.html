@@ -11,69 +11,98 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
 <div class="page">
-
   <div class="top-bar">
     <a href="index.html" class="back-btn" aria-label="Volver"><i class="ti ti-arrow-left"></i></a>
     <span class="top-title">Menú</span>
-    <div class="top-logo"><img src="img/logo.avif" alt="Logo" class="top-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><i class="ti ti-rosette" style="display:none"></i></div>
+    <div class="top-logo">
+      <img src="img/logo.avif" alt="Logo" class="top-logo-img"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <i class="ti ti-rosette" style="display:none"></i>
+    </div>
   </div>
 
-  <div class="cat-grid">
-
-    <a href="productos.html?cat=galleteria" class="cat-card">
-      <div class="cat-icon"><i class="ti ti-cookie" aria-hidden="true"></i></div>
-      <span class="cat-name">Galletería</span>
-      <span class="cat-count">6 productos</span>
-    </a>
-
-    <a href="productos.html?cat=postres" class="cat-card">
-      <div class="cat-icon"><i class="ti ti-ice-cream" aria-hidden="true"></i></div>
-      <span class="cat-name">Postres</span>
-      <span class="cat-count">17 productos</span>
-    </a>
-
-    <a href="productos.html?cat=panaderia" class="cat-card">
-      <div class="cat-icon"><i class="ti ti-bread" aria-hidden="true"></i></div>
-      <span class="cat-name">Panadería</span>
-      <span class="cat-count">Próximamente</span>
-    </a>
-
-    <a href="productos.html?cat=bebidas" class="cat-card">
-      <div class="cat-icon"><i class="ti ti-glass" aria-hidden="true"></i></div>
-      <span class="cat-name">Bebidas y malteadas</span>
-      <span class="cat-count">Próximamente</span>
-    </a>
-
-    <a href="productos.html?cat=waffles" class="cat-card">
-      <div class="cat-icon"><i class="ti ti-waffle" aria-hidden="true"></i></div>
-      <span class="cat-name">Waffles</span>
-      <span class="cat-count">Próximamente</span>
-    </a>
-
-    <a href="productos.html?cat=vinos" class="cat-card">
-      <div class="cat-icon"><i class="ti ti-bottle" aria-hidden="true"></i></div>
-      <span class="cat-name">Vinos & Cafés</span>
-      <span class="cat-count">Próximamente</span>
-    </a>
-
-    <a href="productos.html?cat=saludable" class="cat-card">
-      <div class="cat-icon"><i class="ti ti-leaf" aria-hidden="true"></i></div>
-      <span class="cat-name">Línea saludable</span>
-      <span class="cat-count">Próximamente</span>
-    </a>
-
-    <a href="productos.html?cat=empaques" class="cat-card">
-      <div class="cat-icon"><i class="ti ti-gift" aria-hidden="true"></i></div>
-      <span class="cat-name">Empaques y tarjetas</span>
-      <span class="cat-count">Próximamente</span>
-    </a>
-
+  <!-- Grid de categorías: se rellena dinámicamente -->
+  <div class="cat-grid" id="cat-grid">
+    <!-- Skeletons mientras carga -->
+    <div class="cat-card skeleton"></div>
+    <div class="cat-card skeleton"></div>
+    <div class="cat-card skeleton"></div>
+    <div class="cat-card skeleton"></div>
   </div>
 
   <div class="pb"></div>
 </div>
 
+<style>
+.cat-card.skeleton {
+  background: linear-gradient(90deg, #f0e8ea 25%, #fdf5f7 50%, #f0e8ea 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  min-height: 96px;
+  border-radius: 16px;
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+</style>
+
+<script>
+// ── CONFIG SUPABASE ────────────────────────────────────────────
+const SUPABASE_URL  = 'https://sylkotirzlhrwybqelis.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5bGtvdGlyemxocnd5YnFlbGlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDc4NDgsImV4cCI6MjA5NzEyMzg0OH0.ZabkKV_X_XizS-c1ZUkWFGZ9xIaHjaW9gzuVrn3v0Kg';
+
+async function sbGet(path) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1${path}`, {
+    headers: {
+      'apikey': SUPABASE_ANON,
+      'Authorization': `Bearer ${SUPABASE_ANON}`,
+    }
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+async function init() {
+  try {
+    // Trae categorías y conteos en paralelo
+    const [cats, conteoRows] = await Promise.all([
+      sbGet('/categorias?select=*&order=orden.asc'),
+      sbGet('/productos?select=categoria_id&visible=eq.true'),
+    ]);
+
+    // Conteo por categoría
+    const conteos = conteoRows.reduce((acc, p) => {
+      acc[p.categoria_id] = (acc[p.categoria_id] || 0) + 1;
+      return acc;
+    }, {});
+
+    const grid = document.getElementById('cat-grid');
+    grid.innerHTML = cats.map(cat => {
+      const n = conteos[cat.id] || 0;
+      const countLabel = n > 0 ? `${n} producto${n !== 1 ? 's' : ''}` : 'Próximamente';
+      return `
+        <a href="productos.html?cat=${cat.id}" class="cat-card">
+          <div class="cat-icon"><i class="ti ${cat.icono}" aria-hidden="true"></i></div>
+          <span class="cat-name">${cat.nombre}</span>
+          <span class="cat-count">${countLabel}</span>
+        </a>`;
+    }).join('');
+
+  } catch (e) {
+    document.getElementById('cat-grid').innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:32px;color:#9B7A85">
+        <i class="ti ti-wifi-off" style="font-size:32px;display:block;margin-bottom:8px"></i>
+        No se pudo cargar el menú. Intenta de nuevo.
+        <br><button onclick="location.reload()"
+          style="margin-top:12px;padding:8px 20px;border-radius:10px;border:none;
+                 background:#A87C3A;color:#fff;font-size:14px;cursor:pointer">
+          Reintentar
+        </button>
+      </div>`;
+    console.error(e);
+  }
+}
+
+init();
+</script>
 </body>
 </html>
