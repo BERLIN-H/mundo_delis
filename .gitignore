@@ -1,0 +1,5 @@
+# Local Netlify folder
+.netlify
+
+.README.md
+.README_AUTH.md
