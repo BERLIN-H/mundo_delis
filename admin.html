@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<!-- Keys públicas centralizadas — un solo lugar para cambiarlas -->
+<script src="config.js"></script>
 <!-- Supabase Auth JS (UMD — sin build step) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
@@ -458,9 +460,10 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
 
 <!-- ══════════════════════════════════════════════════════════ -->
 <script>
-// ── SUPABASE CONFIG (solo anon key — la service key está en el servidor) ──
-const SUPABASE_URL  = 'https://sylkotirzlhrwybqelis.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5bGtvdGlyemxocnd5YnFlbGlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDc4NDgsImV4cCI6MjA5NzEyMzg0OH0.ZabkKV_X_XizS-c1ZUkWFGZ9xIaHjaW9gzuVrn3v0Kg';
+// ── SUPABASE CONFIG (viene de config.js — un solo lugar para cambiar keys) ──
+// La SERVICE_KEY nunca llega aquí: vive en las variables de entorno de Netlify.
+const SUPABASE_URL  = window.SUPABASE_URL;
+const SUPABASE_ANON = window.SUPABASE_ANON;      // ✅ pública, de solo lectura
 
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -498,39 +501,31 @@ async function sbGet(path) {
 
 // ── VERIFICACIÓN DE SESIÓN AL CARGAR ─────────────────────────
 (async () => {
-  // Maneja el callback de OAuth (Google) si hay tokens en la URL
-  const { data: { session } } = await sb.auth.getSession();
+  // getUser() consulta el servidor — trae el rol más reciente, no la caché local
+  const { data: { user }, error: userError } = await sb.auth.getUser();
 
-  if (!session) {
-    // No hay sesión → login
+  if (userError || !user) {
     window.location.href = '/login.html';
     return;
   }
 
-  // getUser() consulta al servidor de Supabase y trae el rol más reciente.
-  // getSession() solo lee la caché local del navegador: si el rol ADMIN
-  // se asignó/editó después de que este token se generó, getSession()
-  // seguiría mostrando los datos viejos y te rebotaría al login.
-  const { data: { user }, error } = await sb.auth.getUser();
-
-  if (error || !user) {
-    window.location.href = '/login.html';
-    return;
-  }
-
-  const rol = user.app_metadata?.rol;
+  // app_metadata (solo el servidor con service key puede escribirlo) → más seguro
+  // user_metadata (el cliente puede escribirlo) → fallback para compatibilidad
+  const rol = user.app_metadata?.rol || user.user_metadata?.rol;
   if (rol !== 'ADMIN') {
     await sb.auth.signOut();
     window.location.href = '/login.html?err=no-admin';
     return;
   }
 
+  // Obtener sesión para el access_token (llamadas a la API)
+  const { data: { session } } = await sb.auth.getSession();
   SESSION = session;
 
   // Mostrar info del usuario en la topbar
-  const email = user.email;
-  const name  = user.user_metadata?.nombre || user.user_metadata?.full_name || email;
-  const avatar= user.user_metadata?.avatar_url;
+  const email  = user.email;
+  const name   = user.user_metadata?.nombre || user.user_metadata?.full_name || email;
+  const avatar = user.user_metadata?.avatar_url;
 
   document.getElementById('user-email-bar').textContent = name;
   document.getElementById('session-user-label').textContent = email;
