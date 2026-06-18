@@ -9,9 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<!-- Keys públicas centralizadas — un solo lugar para cambiarlas -->
 <script src="config.js"></script>
-<!-- Supabase Auth JS (UMD — sin build step) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,26 +30,12 @@
   --danger-bg:  #FEF2F2;
 }
 html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2A1820; color: var(--text); }
-
-/* ── GATE: pantalla de carga mientras verifica sesión ── */
-#auth-gate {
-  min-height: 100vh; display: flex; align-items: center; justify-content: center;
-  flex-direction: column; gap: 16px;
-}
-.gate-spinner {
-  width: 40px; height: 40px;
-  border: 3px solid rgba(255,255,255,.15);
-  border-top-color: #C8A050;
-  border-radius: 50%;
-  animation: spin .8s linear infinite;
-}
+#auth-gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+.gate-spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,.15); border-top-color: #C8A050; border-radius: 50%; animation: spin .8s linear infinite; }
 .gate-text { color: rgba(255,255,255,.5); font-size: 14px; }
 @keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── MAIN LAYOUT ── */
 .admin-wrap { display: none; min-height: 100vh; flex-direction: column; max-width: 480px; margin: 0 auto; }
 .admin-wrap.visible { display: flex; }
-
 .admin-topbar { background: var(--text); padding: 14px 16px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 50; }
 .admin-topbar-logo { width: 34px; height: 34px; border-radius: 50%; background: var(--pink-light); border: 1.5px solid var(--pink); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
 .admin-topbar-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
@@ -59,41 +43,27 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
 .admin-topbar-title { flex: 1; font-family: 'Playfair Display', serif; font-size: 16px; color: var(--white); }
 .admin-topbar-sub { font-size: 11px; color: rgba(255,255,255,.5); }
 .user-chip { display: flex; align-items: center; gap: 6px; }
-.user-avatar {
-  width: 28px; height: 28px; border-radius: 50%; background: var(--pink-light);
-  border: 1.5px solid var(--pink); display: flex; align-items: center; justify-content: center;
-  overflow: hidden; flex-shrink: 0;
-}
+.user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--pink-light); border: 1.5px solid var(--pink); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
 .user-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 .user-avatar i { font-size: 14px; color: var(--pink-dark); }
 .logout-btn { background: rgba(255,255,255,.1); border: none; border-radius: 8px; padding: 6px 10px; color: rgba(255,255,255,.7); font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 4px; }
 .logout-btn i { font-size: 14px; }
-
-/* ── TABS ── */
 .admin-tabs { background: var(--white); border-bottom: 1px solid var(--cream-b); display: flex; position: sticky; top: 62px; z-index: 40; }
 .tab-btn { flex: 1; padding: 13px 8px; border: none; background: none; font-size: 12px; font-weight: 500; font-family: 'Inter', sans-serif; color: var(--text-soft); cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; display: flex; flex-direction: column; align-items: center; gap: 3px; }
 .tab-btn i { font-size: 18px; }
 .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
-
-/* ── CONTENT PANELS ── */
 .admin-content { flex: 1; background: var(--cream); }
 .panel { display: none; padding: 16px; }
 .panel.active { display: block; }
-
-/* ── STATS ── */
 .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
 .stat-card { background: var(--white); border-radius: 14px; padding: 16px; border: 1px solid var(--cream-b); }
 .stat-num { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--gold); }
 .stat-label { font-size: 12px; color: var(--text-soft); margin-top: 2px; }
-
-/* ── SECTION HEADER ── */
 .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .section-head h2 { font-size: 15px; font-weight: 600; color: var(--text); }
 .add-btn { display: flex; align-items: center; gap: 6px; background: var(--gold); color: var(--white); border: none; border-radius: 10px; padding: 9px 14px; font-size: 13px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: opacity .15s; }
 .add-btn i { font-size: 16px; }
 .add-btn:active { opacity: .85; }
-
-/* ── PRODUCT CARD ── */
 .prod-admin-card { background: var(--white); border: 1px solid var(--cream-b); border-radius: 14px; padding: 12px; margin-bottom: 10px; display: flex; gap: 12px; align-items: flex-start; }
 .prod-admin-thumb { width: 58px; height: 58px; border-radius: 10px; background: var(--pink-light); flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
 .prod-admin-thumb img { width: 100%; height: 100%; object-fit: cover; }
@@ -111,14 +81,10 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
 .icon-btn:hover { background: var(--pink-light); color: var(--pink-dark); border-color: var(--pink); }
 .icon-btn.danger:hover { background: var(--danger-bg); color: var(--danger); border-color: #FCA5A5; }
 .icon-btn i { font-size: 16px; }
-
-/* ── FILTER BAR ── */
 .filter-bar { display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 2px; }
 .filter-bar::-webkit-scrollbar { display: none; }
 .filter-chip { flex-shrink: 0; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; border: 1.5px solid var(--cream-b); background: var(--white); color: var(--text-mid); cursor: pointer; transition: all .15s; font-family: 'Inter', sans-serif; }
 .filter-chip.active { background: var(--gold); color: var(--white); border-color: var(--gold); }
-
-/* ── MODAL ── */
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(30,10,20,.6); z-index: 200; align-items: flex-end; justify-content: center; }
 .modal-overlay.open { display: flex; }
 .modal-sheet { background: var(--white); border-radius: 24px 24px 0 0; width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto; }
@@ -128,8 +94,6 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
 .modal-close { width: 32px; height: 32px; border-radius: 50%; background: var(--cream); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-mid); }
 .modal-close i { font-size: 18px; }
 .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
-
-/* ── FORM FIELDS ── */
 .field-label { font-size: 12px; color: var(--text-soft); margin-bottom: 5px; display: block; font-weight: 500; }
 .field-input, .field-select, .field-textarea { width: 100%; border: 1.5px solid var(--cream-b); border-radius: 10px; padding: 11px 13px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--text); background: var(--cream); outline: none; transition: border-color .15s; }
 .field-input:focus, .field-select:focus, .field-textarea:focus { border-color: var(--gold-mid); }
@@ -137,7 +101,6 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
 .field-row { display: flex; gap: 10px; }
 .field-row > .field-group { flex: 1; }
 .field-group { display: flex; flex-direction: column; }
-
 .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--cream-b); }
 .toggle-row:last-child { border-bottom: none; }
 .toggle-label { font-size: 14px; color: var(--text); }
@@ -146,19 +109,15 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
 .toggle.on { background: var(--gold); }
 .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--white); transition: left .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
 .toggle.on::after { left: 23px; }
-
 .img-preview { width: 100%; aspect-ratio: 4/3; border-radius: 12px; background: var(--pink-light); border: 2px dashed var(--pink); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; overflow: hidden; transition: border-color .15s; position: relative; }
 .img-preview:hover { border-color: var(--pink-dark); }
 .img-preview img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; border-radius: 10px; }
 .img-preview i { font-size: 32px; color: var(--pink-dark); }
 .img-preview p { font-size: 13px; color: var(--text-soft); }
 .img-upload-progress { display: none; font-size: 12px; color: var(--gold); margin-top: 4px; text-align: center; }
-
 .save-btn { background: var(--gold); color: var(--white); border: none; border-radius: 12px; padding: 15px; font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; width: 100%; margin-top: 4px; transition: opacity .15s; }
 .save-btn:active, .save-btn:disabled { opacity: .65; }
 .save-btn:disabled { cursor: not-allowed; }
-
-/* ── CONFIRM ── */
 .confirm-overlay { display: none; position: fixed; inset: 0; background: rgba(30,10,20,.6); z-index: 300; align-items: center; justify-content: center; padding: 24px; }
 .confirm-overlay.open { display: flex; }
 .confirm-card { background: var(--white); border-radius: 20px; padding: 28px 24px; width: 100%; max-width: 320px; text-align: center; }
@@ -168,13 +127,9 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
 .confirm-btns { display: flex; gap: 10px; margin-top: 20px; }
 .confirm-cancel { flex: 1; background: var(--cream); color: var(--text-mid); border: 1px solid var(--cream-b); border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; }
 .confirm-ok-btn { flex: 1; background: var(--danger); color: var(--white); border: none; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; }
-
-/* ── TOAST ── */
 .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--text); color: var(--white); padding: 12px 20px; border-radius: 12px; font-size: 14px; z-index: 500; transition: transform .3s; white-space: nowrap; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 20px rgba(0,0,0,.3); }
 .toast.show { transform: translateX(-50%) translateY(0); }
 .toast i { font-size: 16px; color: var(--gold-mid); }
-
-/* ── SETTINGS ── */
 .settings-card { background: var(--white); border: 1px solid var(--cream-b); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
 .settings-card h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 7px; }
 .settings-card h3 i { font-size: 17px; color: var(--gold); }
@@ -182,13 +137,9 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
 .setting-row:last-child { border-bottom: none; }
 .setting-label { font-size: 13px; color: var(--text); }
 .setting-sub { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
-
-/* ── EMPTY ── */
 .empty-admin { text-align: center; padding: 48px 24px; color: var(--text-soft); }
 .empty-admin i { font-size: 40px; color: var(--pink); display: block; margin-bottom: 12px; }
 .empty-admin p { font-size: 14px; }
-
-/* ── LOADING OVERLAY ── */
 .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(30,10,20,.5); z-index: 400; align-items: center; justify-content: center; }
 .loading-overlay.open { display: flex; }
 .loading-spinner { width: 48px; height: 48px; border: 3px solid rgba(255,255,255,.2); border-top-color: var(--gold); border-radius: 50%; animation: spin .8s linear infinite; }
@@ -196,19 +147,15 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
 </head>
 <body>
 
-<!-- AUTH GATE: se muestra mientras verifica la sesión -->
 <div id="auth-gate">
   <div class="gate-spinner"></div>
   <p class="gate-text">Verificando acceso…</p>
 </div>
 
-<!-- ADMIN PANEL (oculto hasta verificar) -->
 <div class="admin-wrap" id="admin-wrap">
-
   <div class="admin-topbar">
     <div class="admin-topbar-logo">
-      <img src="img/logo.avif" alt="Logo"
-           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <img src="img/logo.avif" alt="Logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <i class="ti ti-rosette"></i>
     </div>
     <div style="flex:1">
@@ -216,33 +163,19 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
       <div class="admin-topbar-sub" id="user-email-bar">Panel de administración</div>
     </div>
     <div class="user-chip">
-      <div class="user-avatar" id="user-avatar-wrap">
-        <i class="ti ti-user"></i>
-      </div>
-      <button class="logout-btn" onclick="doLogout()">
-        <i class="ti ti-logout"></i> Salir
-      </button>
+      <div class="user-avatar" id="user-avatar-wrap"><i class="ti ti-user"></i></div>
+      <button class="logout-btn" onclick="doLogout()"><i class="ti ti-logout"></i> Salir</button>
     </div>
   </div>
 
   <div class="admin-tabs">
-    <button class="tab-btn active" onclick="switchTab('resumen')">
-      <i class="ti ti-layout-dashboard"></i>Resumen
-    </button>
-    <button class="tab-btn" onclick="switchTab('productos')">
-      <i class="ti ti-package"></i>Productos
-    </button>
-    <button class="tab-btn" onclick="switchTab('categorias')">
-      <i class="ti ti-category"></i>Categorías
-    </button>
-    <button class="tab-btn" onclick="switchTab('ajustes')">
-      <i class="ti ti-settings"></i>Ajustes
-    </button>
+    <button class="tab-btn active" onclick="switchTab('resumen')"><i class="ti ti-layout-dashboard"></i>Resumen</button>
+    <button class="tab-btn" onclick="switchTab('productos')"><i class="ti ti-package"></i>Productos</button>
+    <button class="tab-btn" onclick="switchTab('categorias')"><i class="ti ti-category"></i>Categorías</button>
+    <button class="tab-btn" onclick="switchTab('ajustes')"><i class="ti ti-settings"></i>Ajustes</button>
   </div>
 
   <div class="admin-content">
-
-    <!-- RESUMEN -->
     <div class="panel active" id="panel-resumen">
       <div class="stats-grid" id="stats-grid">
         <div class="stat-card"><div class="stat-num">…</div><div class="stat-label">Cargando</div></div>
@@ -257,7 +190,6 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
       <div id="recent-list"></div>
     </div>
 
-    <!-- PRODUCTOS -->
     <div class="panel" id="panel-productos">
       <div class="section-head">
         <h2>Todos los productos</h2>
@@ -267,7 +199,6 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
       <div id="prod-list"></div>
     </div>
 
-    <!-- CATEGORÍAS -->
     <div class="panel" id="panel-categorias">
       <div class="section-head">
         <h2>Categorías</h2>
@@ -276,7 +207,6 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
       <div id="cat-list"></div>
     </div>
 
-    <!-- AJUSTES -->
     <div class="panel" id="panel-ajustes">
       <div class="settings-card">
         <h3><i class="ti ti-sparkles"></i> Badge "Nuevo"</h3>
@@ -286,8 +216,7 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
             <div class="setting-sub">El badge desaparece automáticamente</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
-            <input class="field-input" type="number" id="new-days-val" min="1" max="90" value="14"
-                   style="width:70px;text-align:center">
+            <input class="field-input" type="number" id="new-days-val" min="1" max="90" value="14" style="width:70px;text-align:center">
             <span style="font-size:13px;color:var(--text-soft)">días</span>
           </div>
         </div>
@@ -305,18 +234,14 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
             <div class="setting-label" id="session-user-label">Usuario</div>
             <div class="setting-sub" id="session-role-label">Rol: ADMIN</div>
           </div>
-          <button class="icon-btn danger" onclick="doLogout()" title="Cerrar sesión">
-            <i class="ti ti-logout"></i>
-          </button>
+          <button class="icon-btn danger" onclick="doLogout()" title="Cerrar sesión"><i class="ti ti-logout"></i></button>
         </div>
       </div>
       <div class="settings-card">
         <h3><i class="ti ti-link"></i> Acceso rápido</h3>
         <div class="setting-row">
           <div class="setting-label">Ver menú público</div>
-          <a href="index.html" target="_blank" class="icon-btn" style="text-decoration:none">
-            <i class="ti ti-external-link"></i>
-          </a>
+          <a href="index.html" target="_blank" class="icon-btn" style="text-decoration:none"><i class="ti ti-external-link"></i></a>
         </div>
       </div>
       <div class="settings-card">
@@ -332,8 +257,6 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
     </div>
   </div>
 </div>
-
-<!-- MODALS (igual que antes) -->
 
 <!-- PRODUCT MODAL -->
 <div class="modal-overlay" id="prod-modal">
@@ -377,8 +300,7 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
         <div class="img-upload-progress" id="img-progress">⬆️ Subiendo imagen…</div>
         <input type="hidden" id="f-img">
         <input type="file" id="f-img-file" accept="image/*" style="display:none" onchange="handleImgFile(this)">
-        <input class="field-input" type="text" id="f-img-url" placeholder="O pega una URL"
-               style="margin-top:8px" oninput="syncImgUrl(this.value)">
+        <input class="field-input" type="text" id="f-img-url" placeholder="O pega una URL" style="margin-top:8px" oninput="syncImgUrl(this.value)">
       </div>
       <div style="background:var(--cream);border-radius:12px;padding:14px;">
         <div class="toggle-row">
@@ -450,31 +372,21 @@ html, body { min-height: 100vh; font-family: 'Inter', sans-serif; background: #2
   </div>
 </div>
 
-<!-- LOADING -->
-<div class="loading-overlay" id="loading-overlay">
-  <div class="loading-spinner"></div>
-</div>
-
-<!-- TOAST -->
+<div class="loading-overlay" id="loading-overlay"><div class="loading-spinner"></div></div>
 <div class="toast" id="toast"><i class="ti ti-check"></i><span id="toast-msg"></span></div>
 
-<!-- ══════════════════════════════════════════════════════════ -->
 <script>
-// ── SUPABASE CONFIG (viene de config.js — un solo lugar para cambiar keys) ──
-// La SERVICE_KEY nunca llega aquí: vive en las variables de entorno de Netlify.
 const SUPABASE_URL  = window.SUPABASE_URL;
-const SUPABASE_ANON = window.SUPABASE_ANON;      // ✅ pública, de solo lectura
+const SUPABASE_ANON = window.SUPABASE_ANON;
 
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
-// ── ESTADO ───────────────────────────────────────────────────
-let SESSION = null;   // sesión de Supabase Auth
+let SESSION = null;
 let STATE   = { cats: [], prods: [], newDays: 14 };
 let activeTab = 'resumen';
 let activeFilter = 'all';
 
-// ── LLAMADA AL PROXY SEGURO (Netlify Function) ────────────────
 async function api(action, payload) {
   const token = SESSION?.access_token;
   const r = await fetch('/api/admin-api', {
@@ -487,7 +399,6 @@ async function api(action, payload) {
   return json.data;
 }
 
-// ── LECTURA PÚBLICA (anon key, sin proxy) ─────────────────────
 async function sbGet(path) {
   const r = await fetch(`${SUPABASE_URL}/rest/v1${path}`, {
     headers: {
@@ -499,9 +410,19 @@ async function sbGet(path) {
   return r.json();
 }
 
-// ── VERIFICACIÓN DE SESIÓN AL CARGAR ─────────────────────────
+// ── VERIFICACIÓN DE SESIÓN ────────────────────────────────────
 (async () => {
-  // getUser() consulta el servidor — trae el rol más reciente, no la caché local
+  // Procesar callback de Google OAuth (tokens en el hash de la URL)
+  const hashParams = new URLSearchParams(window.location.hash.slice(1));
+  if (hashParams.get('access_token')) {
+    await sb.auth.setSession({
+      access_token:  hashParams.get('access_token'),
+      refresh_token: hashParams.get('refresh_token'),
+    });
+    window.history.replaceState(null, '', window.location.pathname);
+  }
+
+  // getUser() consulta el servidor — trae el rol más reciente
   const { data: { user }, error: userError } = await sb.auth.getUser();
 
   if (userError || !user) {
@@ -509,8 +430,7 @@ async function sbGet(path) {
     return;
   }
 
-  // app_metadata (solo el servidor con service key puede escribirlo) → más seguro
-  // user_metadata (el cliente puede escribirlo) → fallback para compatibilidad
+  // Verificar rol ADMIN en app_metadata (servidor) o user_metadata (fallback)
   const rol = user.app_metadata?.rol || user.user_metadata?.rol;
   if (rol !== 'ADMIN') {
     await sb.auth.signOut();
@@ -518,11 +438,11 @@ async function sbGet(path) {
     return;
   }
 
-  // Obtener sesión para el access_token (llamadas a la API)
+  // Obtener sesión para el access_token
   const { data: { session } } = await sb.auth.getSession();
   SESSION = session;
 
-  // Mostrar info del usuario en la topbar
+  // Mostrar info del usuario
   const email  = user.email;
   const name   = user.user_metadata?.nombre || user.user_metadata?.full_name || email;
   const avatar = user.user_metadata?.avatar_url;
@@ -532,38 +452,32 @@ async function sbGet(path) {
   document.getElementById('session-role-label').textContent = `Rol: ADMIN · ${name}`;
 
   if (avatar) {
-    const wrap = document.getElementById('user-avatar-wrap');
-    wrap.innerHTML = `<img src="${avatar}" alt="Avatar">`;
+    document.getElementById('user-avatar-wrap').innerHTML = `<img src="${avatar}" alt="Avatar">`;
   }
 
-  // Quitar gate y mostrar panel
   document.getElementById('auth-gate').style.display = 'none';
   document.getElementById('admin-wrap').classList.add('visible');
 
-  // Cargar datos
   await loadAll();
   renderResumen();
 
-  // Renovar sesión automáticamente
   sb.auth.onAuthStateChange((event, s) => {
     if (event === 'SIGNED_OUT') window.location.href = '/login.html';
     if (s) SESSION = s;
   });
 })();
 
-// ── LOGOUT ───────────────────────────────────────────────────
 async function doLogout() {
   await sb.auth.signOut();
   window.location.href = '/login.html';
 }
 
-// ── CARGA DE DATOS ────────────────────────────────────────────
 async function loadAll() {
   showLoading(true);
   try {
     const [cats, prods, ajustes] = await Promise.all([
       sbGet('/categorias?select=*&order=orden.asc'),
-      sbGet('/productos?select=*&order=created_at.desc'),   // RLS permite ver todos con sesión
+      sbGet('/productos?select=*&order=created_at.desc'),
       sbGet('/ajustes?select=*'),
     ]);
     STATE.cats    = cats;
@@ -575,7 +489,6 @@ async function loadAll() {
   }
 }
 
-// ── HELPERS ───────────────────────────────────────────────────
 function fmt(n) { return '$' + parseInt(n).toLocaleString('es-CO'); }
 function esNuevo(p) {
   if (!p.created_at) return false;
@@ -585,7 +498,6 @@ function mostrarNuevo(p) { return p.badge === 'new' || (p.badge_new_auto && esNu
 function catNombre(id) { return STATE.cats.find(c => c.id === id)?.nombre || id; }
 function catIcono(id)  { return STATE.cats.find(c => c.id === id)?.icono  || 'ti-category'; }
 
-// ── TABS ──────────────────────────────────────────────────────
 function switchTab(id) {
   activeTab = id;
   document.querySelectorAll('.tab-btn').forEach((b, i) =>
@@ -597,7 +509,6 @@ function switchTab(id) {
   if (id === 'categorias') renderCatList();
 }
 
-// ── RESUMEN ───────────────────────────────────────────────────
 function renderResumen() {
   const total = STATE.prods.length;
   const vis   = STATE.prods.filter(p => p.visible).length;
@@ -612,7 +523,6 @@ function renderResumen() {
     STATE.prods.slice(0, 5).map(prodCardHtml).join('') || emptyState('No hay productos');
 }
 
-// ── PROD LIST ─────────────────────────────────────────────────
 function renderProdList() {
   document.getElementById('filter-bar').innerHTML =
     `<button class="filter-chip ${activeFilter==='all'?'active':''}" onclick="setFilter('all')">Todos</button>` +
@@ -627,9 +537,9 @@ function setFilter(f) { activeFilter = f; renderProdList(); }
 
 function prodCardHtml(p) {
   const badges = [
-    mostrarNuevo(p)     ? '<span class="badge-new-admin">✨ Nuevo</span>'    : '',
-    p.badge === 'rec'   ? '<span class="badge-rec-admin">⭐ Recomendado</span>' : '',
-    !p.visible          ? '<span class="badge-hidden">Oculto</span>'          : '',
+    mostrarNuevo(p)   ? '<span class="badge-new-admin">✨ Nuevo</span>'       : '',
+    p.badge === 'rec' ? '<span class="badge-rec-admin">⭐ Recomendado</span>' : '',
+    !p.visible        ? '<span class="badge-hidden">Oculto</span>'            : '',
   ].join('');
   return `
   <div class="prod-admin-card">
@@ -655,7 +565,6 @@ function prodCardHtml(p) {
 }
 function emptyState(m) { return `<div class="empty-admin"><i class="ti ti-package-off"></i><p>${m}</p></div>`; }
 
-// ── CAT LIST ──────────────────────────────────────────────────
 function renderCatList() {
   document.getElementById('cat-list').innerHTML = STATE.cats.map(c => {
     const n = STATE.prods.filter(p => p.categoria_id === c.id).length;
@@ -677,7 +586,6 @@ function renderCatList() {
   }).join('') || emptyState('No hay categorías');
 }
 
-// ── PRODUCT MODAL ─────────────────────────────────────────────
 function openAddModal() {
   document.getElementById('edit-id').value = '';
   document.getElementById('modal-title').textContent = 'Agregar producto';
@@ -722,9 +630,8 @@ async function saveProduct() {
   const name  = document.getElementById('f-name').value.trim();
   const price = parseInt(document.getElementById('f-price').value);
   const cat   = document.getElementById('f-cat').value;
-  if (!name)           { showToast('El nombre es obligatorio', true); return; }
+  if (!name)               { showToast('El nombre es obligatorio', true); return; }
   if (!price || price < 0) { showToast('Precio no válido', true); return; }
-
   const payload = {
     categoria_id:   cat,
     nombre:         name,
@@ -737,11 +644,9 @@ async function saveProduct() {
     badge_new_auto: document.getElementById('t-auto-new').classList.contains('on'),
     visible:        document.getElementById('t-visible').classList.contains('on'),
   };
-
   const editId = document.getElementById('edit-id').value;
   const btn = document.getElementById('save-prod-btn');
-  btn.disabled = true;
-  showLoading(true);
+  btn.disabled = true; showLoading(true);
   try {
     if (editId) {
       const rows = await api('productos.update', { id: editId, ...payload });
@@ -753,17 +658,11 @@ async function saveProduct() {
       if (rows[0]) STATE.prods.unshift(rows[0]);
       showToast('Producto agregado ✓');
     }
-    closeModal('prod-modal');
-    renderCurrentTab();
-  } catch (e) {
-    showToast('Error: ' + e.message, true);
-  } finally {
-    btn.disabled = false;
-    showLoading(false);
-  }
+    closeModal('prod-modal'); renderCurrentTab();
+  } catch(e) { showToast('Error: ' + e.message, true); }
+  finally { btn.disabled = false; showLoading(false); }
 }
 
-// ── CAT MODAL ─────────────────────────────────────────────────
 function openCatModal() {
   document.getElementById('cat-edit-id').value = '';
   document.getElementById('cat-modal-title').textContent = 'Nueva categoría';
@@ -793,8 +692,7 @@ async function saveCat() {
     orden:       parseInt(document.getElementById('cat-orden').value) || 99,
   };
   const btn = document.getElementById('save-cat-btn');
-  btn.disabled = true;
-  showLoading(true);
+  btn.disabled = true; showLoading(true);
   try {
     if (editId) {
       await api('categorias.update', { id: editId, ...payload });
@@ -808,17 +706,11 @@ async function saveCat() {
       if (rows[0]) { STATE.cats.push(rows[0]); STATE.cats.sort((a,b)=>(a.orden||99)-(b.orden||99)); }
       showToast('Categoría creada ✓');
     }
-    closeModal('cat-modal');
-    renderCurrentTab();
-  } catch(e) {
-    showToast('Error: ' + e.message, true);
-  } finally {
-    btn.disabled = false;
-    showLoading(false);
-  }
+    closeModal('cat-modal'); renderCurrentTab();
+  } catch(e) { showToast('Error: ' + e.message, true); }
+  finally { btn.disabled = false; showLoading(false); }
 }
 
-// ── TOGGLE VISIBLE ────────────────────────────────────────────
 async function toggleVisible(id) {
   const p = STATE.prods.find(x => x.id === id);
   if (!p) return;
@@ -832,7 +724,6 @@ async function toggleVisible(id) {
   finally { showLoading(false); }
 }
 
-// ── DELETE ────────────────────────────────────────────────────
 function confirmDelete(id) {
   const p = STATE.prods.find(x => x.id === id);
   document.getElementById('confirm-title').textContent = '¿Eliminar producto?';
@@ -868,7 +759,6 @@ function confirmDeleteCat(id) {
 }
 function closeConfirm() { document.getElementById('confirm-overlay').classList.remove('open'); }
 
-// ── AJUSTES ───────────────────────────────────────────────────
 async function saveNewDays() {
   const v = parseInt(document.getElementById('new-days-val').value);
   if (!v || v < 1) { showToast('Valor no válido', true); return; }
@@ -891,40 +781,29 @@ async function exportData() {
   showToast('Catálogo exportado ✓');
 }
 
-// ── SUBIDA DE IMAGEN (URL firmada, sin exponer service key) ───
 async function handleImgFile(input) {
   const file = input.files[0];
   if (!file) return;
-
-  // Preview local
   const reader = new FileReader();
   reader.onload = e => {
     const img = document.getElementById('img-preview-img');
     img.src = e.target.result; img.style.display = 'block';
   };
   reader.readAsDataURL(file);
-
-  // Pedir URL firmada al servidor
   const prog = document.getElementById('img-progress');
   prog.style.display = 'block';
   prog.textContent   = '⬆️ Subiendo imagen…';
   prog.style.color   = 'var(--gold)';
-
   try {
     const ext  = file.name.split('.').pop().toLowerCase();
     const path = `productos/${Date.now()}.${ext}`;
-
-    // La función devuelve una URL firmada de solo escritura
-    const { signedURL, token } = await api('storage.signedUpload', { path });
-
-    // Subir directo al Storage con esa URL firmada
+    const { signedURL } = await api('storage.signedUpload', { path });
     const uploadRes = await fetch(signedURL, {
       method: 'PUT',
       headers: { 'Content-Type': file.type, 'x-upsert': 'true' },
       body: file,
     });
     if (!uploadRes.ok) throw new Error('Error subiendo la imagen');
-
     const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/imagenes/${path}`;
     document.getElementById('f-img').value     = publicUrl;
     document.getElementById('f-img-url').value = publicUrl;
@@ -942,7 +821,6 @@ function syncImgUrl(val) {
   if (val) { img.src = val; img.style.display = 'block'; } else img.style.display = 'none';
 }
 
-// ── HELPERS UI ────────────────────────────────────────────────
 function toggleBtn(el)  { el.classList.toggle('on'); }
 function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
@@ -955,7 +833,6 @@ function renderCurrentTab() {
   if (activeTab === 'productos')  renderProdList();
   if (activeTab === 'categorias') renderCatList();
 }
-
 let toastTimer;
 function showToast(msg, isErr = false) {
   const t = document.getElementById('toast');
