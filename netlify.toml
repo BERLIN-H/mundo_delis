@@ -1,12 +1,11 @@
-# ══════════════════════════════════════════════════════════════
-#  MUNDO DELIS · netlify.toml
-# ══════════════════════════════════════════════════════════════
-
 [build]
-  publish = "."                        # raíz del proyecto
-  functions = "netlify/functions"      # carpeta de funciones serverless
+  publish = "."
+  functions = "netlify/functions"
 
-# ── HEADERS DE SEGURIDAD ──────────────────────────────────────
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "SUPABASE_URL,SUPABASE_ANON_KEY"
+  SECRETS_SCAN_OMIT_PATHS = "config.js,supabase.js,README_AUTH.md,README.md"
+
 [[headers]]
   for = "/*"
   [headers.values]
@@ -14,20 +13,16 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
 
-# Nunca cachear el admin — siempre fresco
 [[headers]]
   for = "/admin.html"
   [headers.values]
     Cache-Control = "no-store, no-cache, must-revalidate"
 
-# ── REDIRECTS ─────────────────────────────────────────────────
-# /admin → protegido por la función
 [[redirects]]
   from = "/admin"
   to   = "/admin.html"
   status = 200
 
-# /api/* → Netlify Function proxy (aquí vive la service key)
 [[redirects]]
   from = "/api/*"
   to   = "/.netlify/functions/admin-api/:splat"
