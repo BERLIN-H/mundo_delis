@@ -3,8 +3,8 @@
   functions = "netlify/functions"
 
 [build.environment]
-  SECRETS_SCAN_OMIT_KEYS = "SUPABASE_URL,SUPABASE_ANON_KEY"
-  SECRETS_SCAN_OMIT_PATHS = "config.js"
+  SECRETS_SCAN_OMIT_KEYS  = "SUPABASE_URL,SUPABASE_ANON_KEY,SUPABASE_SERVICE_KEY,ADMIN_ACTIVATION_CODE"
+  SECRETS_SCAN_OMIT_PATHS = "config.js,.env"
 
 [[headers]]
   for = "/*"
