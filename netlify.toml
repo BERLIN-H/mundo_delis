@@ -14,13 +14,44 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
 
 [[headers]]
-  for = "/admin.html"
+  for = "/pages/admin.html"
   [headers.values]
     Cache-Control = "no-store, no-cache, must-revalidate"
 
+# Rutas amigables sin /pages/
+[[redirects]]
+  from = "/menu"
+  to   = "/pages/menu.html"
+  status = 200
+
+[[redirects]]
+  from = "/productos"
+  to   = "/pages/productos.html"
+  status = 200
+
+[[redirects]]
+  from = "/detalle"
+  to   = "/pages/detalle.html"
+  status = 200
+
+[[redirects]]
+  from = "/domicilios"
+  to   = "/pages/domicilios.html"
+  status = 200
+
+[[redirects]]
+  from = "/ubicacion"
+  to   = "/pages/ubicacion.html"
+  status = 200
+
+[[redirects]]
+  from = "/login"
+  to   = "/pages/login.html"
+  status = 200
+
 [[redirects]]
   from = "/admin"
-  to   = "/admin.html"
+  to   = "/pages/admin.html"
   status = 200
 
 [[redirects]]

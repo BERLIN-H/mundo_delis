@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#3A2530">
+  <title>Admin · Mundo Delis</title>
+  <link rel="icon" href="../img/logo.avif" type="image/avif">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <script src="../config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+
+  <!-- Auth gate: visible mientras verifica sesión -->
+  <div id="auth-gate">
+    <div class="gate-spinner"></div>
+    <p class="gate-text">Verificando acceso…</p>
+  </div>
+
+  <!-- Panel principal (oculto hasta confirmar ADMIN) -->
+  <div class="admin-wrap" id="admin-wrap">
+
+    <!-- TOP BAR -->
+    <div class="admin-topbar">
+      <div class="admin-topbar-logo">
+        <img src="../img/logo.avif" alt="Logo"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <i class="ti ti-rosette"></i>
+      </div>
+      <div style="flex:1">
+        <div class="admin-topbar-title">Mundo Delis</div>
+        <div class="admin-topbar-sub" id="user-email-bar">Panel de administración</div>
+      </div>
+      <div class="user-chip">
+        <div class="user-avatar" id="user-avatar-wrap"><i class="ti ti-user"></i></div>
+        <button class="logout-btn" onclick="doLogout()"><i class="ti ti-logout"></i> Salir</button>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="admin-tabs">
+      <button class="tab-btn active" onclick="switchTab('resumen')"><i class="ti ti-layout-dashboard"></i>Resumen</button>
+      <button class="tab-btn" onclick="switchTab('productos')"><i class="ti ti-package"></i>Productos</button>
+      <button class="tab-btn" onclick="switchTab('categorias')"><i class="ti ti-category"></i>Categorías</button>
+      <button class="tab-btn" onclick="switchTab('ajustes')"><i class="ti ti-settings"></i>Ajustes</button>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="admin-content">
+
+      <!-- RESUMEN -->
+      <div class="panel active" id="panel-resumen">
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card"><div class="stat-num">…</div><div class="stat-label">Cargando</div></div>
+          <div class="stat-card"><div class="stat-num">…</div><div class="stat-label">Cargando</div></div>
+          <div class="stat-card"><div class="stat-num">…</div><div class="stat-label">Cargando</div></div>
+          <div class="stat-card"><div class="stat-num">…</div><div class="stat-label">Cargando</div></div>
+        </div>
+        <div class="section-head">
+          <h2>Productos recientes</h2>
+          <button class="add-btn" onclick="openAddModal()"><i class="ti ti-plus"></i> Agregar</button>
+        </div>
+        <div id="recent-list"></div>
+      </div>
+
+      <!-- PRODUCTOS -->
+      <div class="panel" id="panel-productos">
+        <div class="section-head">
+          <h2>Todos los productos</h2>
+          <button class="add-btn" onclick="openAddModal()"><i class="ti ti-plus"></i> Agregar</button>
+        </div>
+        <div class="filter-bar" id="filter-bar"></div>
+        <div id="prod-list"></div>
+      </div>
+
+      <!-- CATEGORIAS -->
+      <div class="panel" id="panel-categorias">
+        <div class="section-head">
+          <h2>Categorías</h2>
+          <button class="add-btn" onclick="openCatModal()"><i class="ti ti-plus"></i> Nueva</button>
+        </div>
+        <div id="cat-list"></div>
+      </div>
+
+      <!-- AJUSTES -->
+      <div class="panel" id="panel-ajustes">
+        <div class="settings-card">
+          <h3><i class="ti ti-sparkles"></i> Badge "Nuevo"</h3>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Días como "Nuevo"</div>
+              <div class="setting-sub">El badge desaparece automáticamente</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input class="field-input" type="number" id="new-days-val" min="1" max="90" value="14"
+                     style="width:70px;text-align:center">
+              <span style="font-size:13px;color:var(--text-soft)">días</span>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div></div>
+            <button class="add-btn" onclick="saveNewDays()" style="padding:8px 14px;font-size:12px">
+              <i class="ti ti-device-floppy"></i> Guardar
+            </button>
+          </div>
+        </div>
+        <div class="settings-card">
+          <h3><i class="ti ti-shield-lock"></i> Sesión activa</h3>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label" id="session-user-label">Usuario</div>
+              <div class="setting-sub"  id="session-role-label">Rol: ADMIN</div>
+            </div>
+            <button class="icon-btn danger" onclick="doLogout()" title="Cerrar sesión">
+              <i class="ti ti-logout"></i>
+            </button>
+          </div>
+        </div>
+        <div class="settings-card">
+          <h3><i class="ti ti-link"></i> Acceso rápido</h3>
+          <div class="setting-row">
+            <div class="setting-label">Ver menú público</div>
+            <a href="../index.html" target="_blank" class="icon-btn" style="text-decoration:none">
+              <i class="ti ti-external-link"></i>
+            </a>
+          </div>
+        </div>
+        <div class="settings-card">
+          <h3><i class="ti ti-database-export"></i> Datos</h3>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Exportar catálogo</div>
+              <div class="setting-sub">Descarga JSON de respaldo</div>
+            </div>
+            <button class="icon-btn" onclick="exportData()"><i class="ti ti-download"></i></button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL PRODUCTO -->
+  <div class="modal-overlay" id="prod-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <span class="modal-title" id="modal-title">Agregar producto</span>
+        <button class="modal-close" onclick="closeModal('prod-modal')"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-id">
+        <div class="field-group">
+          <label class="field-label">Nombre del producto *</label>
+          <input class="field-input" type="text" id="f-name" placeholder="Ej: Tarta de Queso">
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">Precio (COP) *</label>
+            <input class="field-input" type="number" id="f-price" placeholder="18000" min="0">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Categoría *</label>
+            <select class="field-select" id="f-cat"></select>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Descripción corta</label>
+          <input class="field-input" type="text" id="f-desc-short" placeholder="Resumen en 1 línea">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Descripción completa</label>
+          <textarea class="field-textarea" id="f-desc-long" placeholder="Descripción en el detalle del producto…"></textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Imagen</label>
+          <div class="img-preview" id="img-preview-box" onclick="document.getElementById('f-img-file').click()">
+            <img id="img-preview-img" src="" alt="" style="display:none">
+            <i class="ti ti-photo-plus"></i>
+            <p>Toca para subir imagen</p>
+          </div>
+          <div class="img-upload-progress" id="img-progress">⬆️ Subiendo imagen…</div>
+          <input type="hidden" id="f-img">
+          <input type="file" id="f-img-file" accept="image/*" style="display:none" onchange="handleImgFile(this)">
+          <input class="field-input" type="text" id="f-img-url" placeholder="O pega una URL" style="margin-top:8px"
+                 oninput="syncImgUrl(this.value)">
+        </div>
+        <div style="background:var(--cream);border-radius:12px;padding:14px;">
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Badge automático "Nuevo"</div>
+              <div class="toggle-sub">Activo los primeros N días</div>
+            </div>
+            <button class="toggle on" id="t-auto-new" onclick="toggleBtn(this)"></button>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Forzar badge "Nuevo" ✨</div>
+              <div class="toggle-sub">Manual, ignora la fecha</div>
+            </div>
+            <button class="toggle" id="t-new" onclick="toggleBtn(this)"></button>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">⭐ Recomendado</div>
+              <div class="toggle-sub">Aparece destacado</div>
+            </div>
+            <button class="toggle" id="t-rec" onclick="toggleBtn(this)"></button>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Visible en el menú</div>
+              <div class="toggle-sub">Desactiva para ocultar sin eliminar</div>
+            </div>
+            <button class="toggle on" id="t-visible" onclick="toggleBtn(this)"></button>
+          </div>
+        </div>
+        <button class="save-btn" id="save-prod-btn" onclick="saveProduct()">Guardar producto</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CATEGORÍA -->
+  <div class="modal-overlay" id="cat-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <span class="modal-title" id="cat-modal-title">Nueva categoría</span>
+        <button class="modal-close" onclick="closeModal('cat-modal')"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="cat-edit-id">
+        <div class="field-group">
+          <label class="field-label">Nombre *</label>
+          <input class="field-input" type="text" id="cat-name" placeholder="Ej: Waffles">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Ícono (Tabler Icons)</label>
+          <input class="field-input" type="text" id="cat-icon" placeholder="Ej: ti-waffle">
+          <small style="font-size:11px;color:var(--text-soft);margin-top:4px;display:block">
+            Ver íconos en <a href="https://tabler.io/icons" target="_blank" style="color:var(--gold)">tabler.io/icons</a>
+          </small>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Descripción</label>
+          <input class="field-input" type="text" id="cat-desc" placeholder="Ej: Waffles con toppings especiales">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Orden en el menú</label>
+          <input class="field-input" type="number" id="cat-orden" placeholder="1, 2, 3…" min="1">
+        </div>
+        <button class="save-btn" id="save-cat-btn" onclick="saveCat()">Guardar categoría</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRM -->
+  <div class="confirm-overlay" id="confirm-overlay">
+    <div class="confirm-card">
+      <div class="confirm-icon"><i class="ti ti-trash"></i></div>
+      <div class="confirm-title" id="confirm-title">¿Eliminar?</div>
+      <div class="confirm-desc"  id="confirm-desc">Esta acción no se puede deshacer.</div>
+      <div class="confirm-btns">
+        <button class="confirm-cancel" onclick="closeConfirm()">Cancelar</button>
+        <button class="confirm-ok-btn" id="confirm-ok">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING & TOAST -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+  <div class="toast" id="toast"><i class="ti ti-check"></i><span id="toast-msg"></span></div>
+
+  <script src="../js/admin.js"></script>
+</body>
+</html>

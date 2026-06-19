@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Domicilios — Mundo Delis</title>
+  <link rel="icon" href="../img/logo.avif" type="image/avif">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="../css/frontend.css">
+</head>
+<body>
+
+<div class="page dom-page">
+
+  <div class="top-bar">
+    <a href="../index.html" class="back-btn" aria-label="Volver"><i class="ti ti-arrow-left"></i></a>
+    <span class="top-title">Domicilios</span>
+    <div class="top-logo">
+      <img src="../img/logo.avif" alt="Logo" class="top-logo-img"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <i class="ti ti-rosette" style="display:none"></i>
+    </div>
+  </div>
+
+  <div class="dom-hero">
+    <i class="ti ti-motorbike" aria-hidden="true"></i>
+    <h2>Pedidos a domicilio</h2>
+    <p>Completa el formulario y te enviamos el resumen por WhatsApp</p>
+  </div>
+
+  <div class="dom-form-wrap">
+
+    <!-- Info horario -->
+    <div class="dom-card">
+      <h3><i class="ti ti-clock" aria-hidden="true"></i> Horario de domicilios</h3>
+      <div class="info-row"><i class="ti ti-calendar"></i><span>Lunes – Viernes: 8:00am – 8:00pm</span></div>
+      <div class="info-row"><i class="ti ti-calendar"></i><span>Sábado – Domingo: 9:00am – 6:00pm</span></div>
+      <div class="info-row"><i class="ti ti-map-pin"></i><span>Cobertura dentro de Riohacha</span></div>
+    </div>
+
+    <!-- Datos personales -->
+    <div class="dom-card">
+      <h3><i class="ti ti-user" aria-hidden="true"></i> Tus datos</h3>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label class="form-label" for="inp-nombre">Nombre completo *</label>
+        <input class="form-input" id="inp-nombre" type="text" placeholder="Ej: María García" autocomplete="name">
+      </div>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label class="form-label" for="inp-tel">Teléfono / WhatsApp *</label>
+        <input class="form-input" id="inp-tel" type="tel" placeholder="Ej: 300 123 4567" autocomplete="tel">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="inp-dir">Dirección de entrega *</label>
+        <input class="form-input" id="inp-dir" type="text" placeholder="Calle, barrio, referencia..." autocomplete="street-address">
+      </div>
+    </div>
+
+    <!-- Productos -->
+    <div class="dom-card">
+      <h3><i class="ti ti-shopping-bag" aria-hidden="true"></i> Tu pedido</h3>
+      <div class="prod-selector" id="prod-selector">
+        <div class="empty-sel" style="font-size:13px;color:var(--text-soft);text-align:center;padding:12px 0;">
+          Aún no has agregado productos
+        </div>
+      </div>
+      <button class="add-prod-btn" style="margin-top:10px;" onclick="openPicker()">
+        <i class="ti ti-plus" aria-hidden="true"></i> Agregar producto
+      </button>
+      <div id="total-row" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--cream-b);display:flex;justify-content:space-between;align-items:baseline;">
+        <span style="font-size:13px;color:var(--text-soft);">Total estimado</span>
+        <span id="total-val" style="font-family:'Playfair Display',serif;font-size:20px;color:var(--gold);"></span>
+      </div>
+    </div>
+
+    <!-- Nota adicional -->
+    <div class="dom-card">
+      <h3><i class="ti ti-notes" aria-hidden="true"></i> Nota adicional</h3>
+      <textarea class="form-textarea" id="inp-nota" placeholder="Alergias, preferencias de decoración, hora de entrega..."></textarea>
+    </div>
+
+    <!-- Botón enviar -->
+    <button class="send-btn" id="send-btn" onclick="enviar()">
+      <i class="ti ti-brand-whatsapp" aria-hidden="true"></i> Enviar pedido por WhatsApp
+    </button>
+
+    <p style="font-size:11px;color:var(--text-soft);text-align:center;padding:0 8px 4px;">
+      Al enviar se abrirá WhatsApp con el resumen de tu pedido listo para enviar.
+    </p>
+
+  </div>
+
+  <div class="pb"></div>
+</div>
+
+<!-- PRODUCT PICKER MODAL -->
+<div class="overlay" id="overlay" onclick="closePickerOuter(event)">
+  <div class="picker-sheet" id="picker-sheet">
+    <div class="picker-header">
+      <h3>Seleccionar producto</h3>
+      <button class="picker-close" onclick="closePicker()" aria-label="Cerrar"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="picker-body"></div>
+  </div>
+</div>
+
+<script src="../js/domicilios.js"></script>
+</body>
+</html>

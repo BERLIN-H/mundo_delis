@@ -1,0 +1,21 @@
+{
+	"dbConnectionString": "postgres://localhost:62732/postgres",
+	"geolocation": {
+		"data": {
+			"city": "Riohacha",
+			"country": {
+				"code": "CO",
+				"name": "Colombia"
+			},
+			"subdivision": {
+				"code": "LAG",
+				"name": "La Guajira Department"
+			},
+			"timezone": "America/Bogota",
+			"latitude": 11.5424,
+			"longitude": -72.9019,
+			"postalCode": "440001"
+		},
+		"timestamp": 1781822254582
+	}
+}

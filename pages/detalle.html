@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Producto — Mundo Delis</title>
+  <link rel="icon" href="../img/logo.avif" type="image/avif">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="../css/frontend.css">
+  <style>
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  </style>
+  <script src="../config.js"></script>
+</head>
+<body>
+<div class="page detail-page">
+  <div class="top-bar">
+    <a id="back-link" href="menu.html" class="back-btn" aria-label="Volver"><i class="ti ti-arrow-left"></i></a>
+    <span class="top-title" id="top-title"></span>
+    <div class="top-logo">
+      <img src="../img/logo.avif" alt="Logo" class="top-logo-img"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <i class="ti ti-rosette" style="display:none"></i>
+    </div>
+  </div>
+
+  <div id="detail-content">
+    <!-- Skeleton hero -->
+    <div id="skeleton-hero" style="
+      width:100%; aspect-ratio:4/3;
+      background:linear-gradient(90deg,#f0e8ea 25%,#fdf5f7 50%,#f0e8ea 75%);
+      background-size:200% 100%; animation:shimmer 1.4s infinite;">
+    </div>
+    <div style="padding:20px">
+      <div style="height:24px;width:60%;border-radius:8px;margin-bottom:12px;
+        background:linear-gradient(90deg,#f0e8ea 25%,#fdf5f7 50%,#f0e8ea 75%);
+        background-size:200% 100%;animation:shimmer 1.4s infinite;"></div>
+      <div style="height:16px;width:90%;border-radius:8px;margin-bottom:8px;
+        background:linear-gradient(90deg,#f0e8ea 25%,#fdf5f7 50%,#f0e8ea 75%);
+        background-size:200% 100%;animation:shimmer 1.4s infinite;"></div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/utils.js"></script>
+<script src="../js/detalle.js"></script>
+</body>
+</html>

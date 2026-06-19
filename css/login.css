@@ -1,0 +1,129 @@
+/* ══════════════════════════════════════════════════════
+   MUNDO DELIS · Login Styles
+   Archivo: css/login.css
+   ══════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --pink:       #E8B4C0;
+  --pink-light: #FBF0F4;
+  --pink-dark:  #B5607A;
+  --cream:      #FAF6F0;
+  --cream-b:    #EDE5DA;
+  --gold:       #A87C3A;
+  --gold-mid:   #C8A050;
+  --text:       #3A2530;
+  --text-mid:   #6B4A55;
+  --text-soft:  #9B7A85;
+  --white:      #FFFFFF;
+  --danger:     #D94040;
+}
+
+html, body {
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  background: #2A1820;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.card {
+  background: var(--white);
+  border-radius: 24px;
+  padding: 40px 32px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.35);
+}
+
+.logo-wrap {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: var(--pink-light);
+  border: 2px solid var(--pink);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+  overflow: hidden;
+}
+.logo-wrap img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.logo-wrap i   { font-size: 32px; color: var(--pink-dark); }
+
+h1 { font-family: 'Playfair Display', serif; font-size: 22px; text-align: center; color: var(--text); }
+.sub { font-size: 13px; color: var(--text-soft); text-align: center; margin: 4px 0 28px; }
+
+/* ── TABS ── */
+.tabs {
+  display: flex; border-radius: 12px;
+  background: var(--cream); padding: 4px; gap: 4px; margin-bottom: 22px;
+}
+.tab {
+  flex: 1; padding: 9px; border: none; border-radius: 9px;
+  font-size: 13px; font-weight: 500; font-family: 'Inter', sans-serif;
+  color: var(--text-soft); cursor: pointer; transition: all .15s; background: none;
+}
+.tab.active { background: var(--white); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+
+/* ── FORM ── */
+.field { margin-bottom: 14px; }
+label { font-size: 12px; color: var(--text-soft); font-weight: 500; display: block; margin-bottom: 5px; }
+input[type=email], input[type=password], input[type=text] {
+  width: 100%; border: 1.5px solid var(--cream-b); border-radius: 10px;
+  padding: 12px 14px; font-size: 14px; font-family: 'Inter', sans-serif;
+  color: var(--text); background: var(--cream); outline: none; transition: border-color .15s;
+}
+input:focus { border-color: var(--gold-mid); }
+
+/* ── BUTTONS ── */
+.btn-primary {
+  width: 100%; background: var(--gold); color: var(--white);
+  border: none; border-radius: 12px; padding: 14px;
+  font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif;
+  cursor: pointer; transition: opacity .15s; margin-top: 4px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-primary:active   { opacity: .85; }
+.btn-primary:disabled { opacity: .55; cursor: not-allowed; }
+
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 18px 0; color: var(--text-soft); font-size: 12px;
+}
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--cream-b); }
+
+.btn-google {
+  width: 100%; background: var(--white); color: var(--text);
+  border: 1.5px solid var(--cream-b); border-radius: 12px; padding: 13px;
+  font-size: 14px; font-weight: 500; font-family: 'Inter', sans-serif;
+  cursor: pointer; transition: border-color .15s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.btn-google:hover { border-color: var(--gold-mid); }
+.btn-google svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+/* ── STATUS MESSAGES ── */
+.msg {
+  font-size: 13px; text-align: center; margin-top: 14px;
+  padding: 10px 14px; border-radius: 10px; display: none;
+}
+.msg.error   { background: #FEF2F2; color: var(--danger); display: block; }
+.msg.success { background: #F0FAF1; color: #2D7A3A;       display: block; }
+.msg.loading { background: var(--cream); color: var(--text-soft); display: block; }
+
+.return-link {
+  display: block; text-align: center; margin-top: 20px;
+  font-size: 12px; color: var(--text-soft); text-decoration: none;
+}
+.return-link:hover { color: var(--gold); }
+
+/* ── SPINNER ── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,.4);
+  border-top-color: var(--white);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
