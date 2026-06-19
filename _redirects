@@ -1,0 +1,8 @@
+/api/*          /.netlify/functions/admin-api    200
+/menu           /pages/menu.html                 200
+/productos      /pages/productos.html            200
+/detalle        /pages/detalle.html              200
+/domicilios     /pages/domicilios.html           200
+/ubicacion      /pages/ubicacion.html            200
+/login          /pages/login.html                200
+/admin          /pages/admin.html                200

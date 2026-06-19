@@ -57,14 +57,14 @@ async function sbGet(path) {
   const { data: { user }, error: userError } = await sb.auth.getUser();
 
   if (userError || !user) {
-    window.location.href = '/login.html';
+    window.location.href = '/login';
     return;
   }
 
   const rol = user.app_metadata?.rol || user.user_metadata?.rol;
   if (rol !== 'ADMIN') {
     await sb.auth.signOut();
-    window.location.href = '/login.html?err=no-admin';
+    window.location.href = '/login?err=no-admin';
     return;
   }
 
@@ -90,14 +90,14 @@ async function sbGet(path) {
   renderResumen();
 
   sb.auth.onAuthStateChange((event, s) => {
-    if (event === 'SIGNED_OUT') window.location.href = '/login.html';
+    if (event === 'SIGNED_OUT') window.location.href = '/login';
     if (s) SESSION = s;
   });
 })();
 
 async function doLogout() {
   await sb.auth.signOut();
-  window.location.href = '/login.html';
+  window.location.href = '/login';
 }
 
 // ══════════════════════════════════════════════════════

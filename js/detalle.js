@@ -28,7 +28,7 @@ async function init() {
 
     document.title = `${prod.nombre} — Mundo Delis`;
     document.getElementById('top-title').textContent = cat?.nombre || '';
-    document.getElementById('back-link').href = `productos.html?cat=${prod.categoria_id}`;
+    document.getElementById('back-link').href = `/productos?cat=${prod.categoria_id}`;
 
     const catIcon = cat?.icono || 'ti-rosette';
     const badge   = badgeHtml(prod, newDays);
@@ -51,7 +51,7 @@ async function init() {
           <i class="ti ti-info-circle" aria-hidden="true"></i>
           <span>¿Te antojaste? Puedes pedirlo a domicilio desde la sección <strong>Domicilios</strong> o acercarte a nuestro local.</span>
         </div>
-        <a href="domicilios.html" class="home-btn home-btn-gold" style="margin-top:16px;display:flex;">
+        <a href="/domicilios" class="home-btn home-btn-gold" style="margin-top:16px;display:flex;">
           <i class="ti ti-motorbike" aria-hidden="true"></i> Pedir a domicilio
         </a>
       </div>
@@ -68,7 +68,7 @@ function showError(msg) {
     <div class="empty-state">
       <i class="ti ti-alert-circle"></i>
       <h3>${msg}</h3>
-      <p><a href="menu.html" style="color:#A87C3A">← Volver al menú</a></p>
+      <p><a href="/menu" style="color:#A87C3A">← Volver al menú</a></p>
     </div>`;
 }
 

@@ -57,7 +57,7 @@ async function init() {
     listEl.innerHTML = prods.map(p => {
       const badge = badgeHtml(p, newDays);
       return `
-        <a class="prod-item" href="detalle.html?id=${p.id}">
+        <a class="prod-item" href="/detalle?id=${p.id}">
           <div class="prod-thumb">
             <img src="${p.imagen_url}" alt="${p.nombre}"
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">

@@ -4,7 +4,7 @@
 
 [build.environment]
   SECRETS_SCAN_OMIT_KEYS = "SUPABASE_URL,SUPABASE_ANON_KEY"
-  SECRETS_SCAN_OMIT_PATHS = "config.js,supabase.js,README_AUTH.md,README.md"
+  SECRETS_SCAN_OMIT_PATHS = "config.js"
 
 [[headers]]
   for = "/*"
@@ -14,11 +14,22 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
 
 [[headers]]
+  for = "/admin"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate"
+
+[[headers]]
   for = "/pages/admin.html"
   [headers.values]
     Cache-Control = "no-store, no-cache, must-revalidate"
 
-# Rutas amigables sin /pages/
+# API Function
+[[redirects]]
+  from = "/api/*"
+  to   = "/.netlify/functions/admin-api"
+  status = 200
+
+# Rutas amigables → páginas reales
 [[redirects]]
   from = "/menu"
   to   = "/pages/menu.html"
@@ -52,9 +63,4 @@
 [[redirects]]
   from = "/admin"
   to   = "/pages/admin.html"
-  status = 200
-
-[[redirects]]
-  from = "/api/*"
-  to   = "/.netlify/functions/admin-api/:splat"
   status = 200

@@ -17,7 +17,7 @@ const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
   const { data: { user } } = await sb.auth.getUser();
   if (user) {
     const rol = user.app_metadata?.rol || user.user_metadata?.rol;
-    if (rol === 'ADMIN') window.location.href = '/admin.html';
+    if (rol === 'ADMIN') window.location.href = '/admin';
   }
 })();
 
@@ -57,7 +57,7 @@ async function doLogin() {
   }
 
   showMsg('¡Bienvenida! Redirigiendo…', 'success');
-  setTimeout(() => { window.location.href = '/admin.html'; }, 800);
+  setTimeout(() => { window.location.href = '/admin'; }, 800);
 }
 
 // ── LOGIN CON GOOGLE ──
@@ -65,7 +65,7 @@ async function doGoogle() {
   showMsg('Redirigiendo a Google…', 'loading');
   const { error } = await sb.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.SITE_URL + '/admin.html' }
+    options: { redirectTo: window.SITE_URL + '/admin' }
   });
   if (error) showMsg('Error al conectar con Google: ' + error.message, 'error');
 }
@@ -100,7 +100,7 @@ async function doRegister() {
     showMsg('✅ Cuenta creada. Revisa tu correo para confirmar y luego inicia sesión.', 'success');
   } else if (data.session) {
     showMsg('¡Cuenta creada! Redirigiendo…', 'success');
-    setTimeout(() => { window.location.href = '/admin.html'; }, 800);
+    setTimeout(() => { window.location.href = '/admin'; }, 800);
   }
   setLoading('btn-register', false);
 }

@@ -20,7 +20,7 @@ async function init() {
       const n = conteos[cat.id] || 0;
       const countLabel = n > 0 ? `${n} producto${n !== 1 ? 's' : ''}` : 'Próximamente';
       return `
-        <a href="productos.html?cat=${cat.id}" class="cat-card">
+        <a href="/productos?cat=${cat.id}" class="cat-card">
           <div class="cat-icon"><i class="ti ${cat.icono}" aria-hidden="true"></i></div>
           <span class="cat-name">${cat.nombre}</span>
           <span class="cat-count">${countLabel}</span>
