@@ -97,11 +97,31 @@
 <!-- PRODUCT PICKER MODAL -->
 <div class="overlay" id="overlay" onclick="closePickerOuter(event)">
   <div class="picker-sheet" id="picker-sheet">
+
+    <!-- Cabecera -->
     <div class="picker-header">
-      <h3>Seleccionar producto</h3>
-      <button class="picker-close" onclick="closePicker()" aria-label="Cerrar"><i class="ti ti-x"></i></button>
+      <div class="modal-handle" style="margin:0 auto 0;"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 0;">
+        <h3 style="font-family:'Playfair Display',serif;font-size:17px;">Agregar productos</h3>
+        <button class="picker-close" onclick="closePicker()" aria-label="Cerrar">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
     </div>
-    <div id="picker-body"></div>
+
+    <!-- Tabs de categoría -->
+    <div id="picker-tabs" class="picker-tabs-row"></div>
+
+    <!-- Grid de productos -->
+    <div id="picker-grid" class="picker-grid"></div>
+
+    <!-- Footer: botón listo -->
+    <div class="picker-footer">
+      <button class="send-btn" onclick="pickerListo()" style="margin:0;">
+        <i class="ti ti-check"></i> Listo
+      </button>
+    </div>
+
   </div>
 </div>
 

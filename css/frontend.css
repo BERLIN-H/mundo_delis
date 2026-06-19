@@ -695,3 +695,191 @@ a { text-decoration: none; color: inherit; }
   object-fit: cover;
   border-radius: 50%;
 }
+
+/* ══════════════════════════════════════════════════════
+   PICKER DE DOMICILIOS — Tabs + Grid
+   ══════════════════════════════════════════════════════ */
+
+.picker-sheet {
+  background: var(--white);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Handle drag */
+.picker-sheet .modal-handle {
+  width: 36px; height: 4px;
+  background: var(--cream-b);
+  border-radius: 2px;
+  margin: 10px auto 0;
+  flex-shrink: 0;
+}
+
+/* Cabecera fija */
+.picker-header {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--cream-b);
+  padding-bottom: 10px;
+}
+
+/* Fila de tabs */
+.picker-tabs-row {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  overflow-x: auto;
+  flex-shrink: 0;
+  background: var(--white);
+  border-bottom: 1px solid var(--cream-b);
+}
+.picker-tabs-row::-webkit-scrollbar { display: none; }
+
+.picker-tab {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1.5px solid var(--cream-b);
+  background: var(--white);
+  color: var(--text-mid);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all .15s;
+}
+.picker-tab i { font-size: 16px; }
+.picker-tab.active {
+  background: var(--pink-dark);
+  color: var(--white);
+  border-color: var(--pink-dark);
+}
+
+/* Grid de cards */
+.picker-grid {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  align-content: start;
+}
+.picker-grid::-webkit-scrollbar { width: 4px; }
+.picker-grid::-webkit-scrollbar-thumb { background: var(--cream-b); border-radius: 4px; }
+
+/* Card de producto en el picker */
+.picker-card {
+  background: var(--white);
+  border: 1.5px solid var(--cream-b);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color .15s;
+}
+.picker-card:has(.picker-qty-row) {
+  border-color: var(--pink-mid);
+}
+
+.picker-card-img {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--pink-light);
+  overflow: hidden;
+}
+.picker-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.picker-card-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  inset: 0;
+}
+.picker-card-icon i { font-size: 32px; color: var(--pink-dark); }
+
+/* Badge de cantidad en la imagen */
+.picker-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: var(--pink-dark);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 700;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.picker-card-body {
+  padding: 8px 10px 4px;
+}
+.picker-card-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.3;
+}
+.picker-card-price {
+  font-size: 13px;
+  color: var(--gold);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+.picker-card-actions {
+  padding: 6px 8px 10px;
+  margin-top: auto;
+}
+
+.picker-add-btn {
+  width: 100%;
+  background: var(--pink-dark);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 6px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: opacity .15s;
+}
+.picker-add-btn:active { opacity: .8; }
+.picker-add-btn i { font-size: 14px; }
+
+.picker-qty-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Footer del picker */
+.picker-footer {
+  flex-shrink: 0;
+  padding: 12px 16px 20px;
+  border-top: 1px solid var(--cream-b);
+  background: var(--white);
+}

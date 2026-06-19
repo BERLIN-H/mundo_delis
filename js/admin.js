@@ -438,13 +438,42 @@ async function saveNewDays() {
 }
 
 async function exportData() {
-  const blob = new Blob([JSON.stringify({ cats: STATE.cats, prods: STATE.prods }, null, 2)],
-    { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `mundo-delis-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  const fecha = new Date().toISOString().slice(0, 10);
+
+  // ── Construir filas enriquecidas con nombre de categoría ──
+  const filas = STATE.prods.map(p => ({
+    id:          p.id,
+    nombre:      p.nombre,
+    categoria:   catNombre(p.categoria_id),
+    precio:      p.precio,
+    desc_corta:  p.desc_corta  || '',
+    desc_larga:  p.desc_larga  || '',
+    imagen_url:  p.imagen_url  || '',
+    badge:       p.badge       || '',
+    visible:     p.visible ? 'Sí' : 'No',
+    creado:      p.created_at  ? p.created_at.slice(0, 10) : '',
+  }));
+
+  // ── CSV ──
+  const cols = ['id','nombre','categoria','precio','desc_corta','desc_larga','imagen_url','badge','visible','creado'];
+  const csvHead = cols.join(';');
+  const csvRows = filas.map(f =>
+    cols.map(c => `"${String(f[c]).replace(/"/g,'""')}"`).join(';')
+  );
+  const csvContent = [csvHead, ...csvRows].join('\n');
+  const bom = '\uFEFF'; // BOM para que Excel abra bien el UTF-8
+  descargar(bom + csvContent, `mundo-delis-productos-${fecha}.csv`, 'text/csv;charset=utf-8');
+
+  showToast('Productos exportados como CSV ✓');
+}
+
+function descargar(contenido, nombre, tipo) {
+  const blob = new Blob([contenido], { type: tipo });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = nombre;
   a.click();
-  showToast('Catálogo exportado ✓');
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
 // ══════════════════════════════════════════════════════
