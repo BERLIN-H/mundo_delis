@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <link rel="stylesheet" href="../css/frontend.css">
+  <script src="../config.js"></script>
 </head>
 <body>
 
@@ -125,6 +126,28 @@
   </div>
 </div>
 
+<!-- MODAL: opciones de producto (sabor, tipo…) -->
+<div class="overlay" id="opt-overlay" onclick="closeOptModalOuter(event)">
+  <div class="picker-sheet" id="opt-sheet" style="max-height:80vh;">
+    <div class="picker-header">
+      <div class="modal-handle" style="margin:0 auto 0;"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 0;">
+        <h3 style="font-family:'Playfair Display',serif;font-size:17px;" id="opt-modal-title">Elige las opciones</h3>
+        <button class="picker-close" onclick="closeOptModal()" aria-label="Cerrar">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+    </div>
+    <div id="opt-modal-body" style="padding:8px 16px 16px;overflow-y:auto;"></div>
+    <div class="picker-footer">
+      <button class="send-btn" onclick="confirmarOpciones()" style="margin:0;">
+        <i class="ti ti-check"></i> Agregar al pedido
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/utils.js"></script>
 <script src="../js/domicilios.js"></script>
 </body>
 </html>

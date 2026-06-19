@@ -331,6 +331,52 @@ a { text-decoration: none; color: inherit; }
 }
 .detail-note i { font-size: 16px; color: var(--pink-dark); flex-shrink: 0; margin-top: 1px; }
 
+/* ── PRODUCT OPTIONS (variantes: sabor, tipo…) ── */
+.opt-group { margin-top: 22px; }
+.opt-group-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.opt-group-required {
+  font-size: 11px;
+  color: var(--text-soft);
+  margin-bottom: 10px;
+  display: block;
+}
+.opt-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.opt-chip {
+  border: 1.5px solid var(--cream-b);
+  background: var(--white);
+  color: var(--text-mid);
+  font-size: 13px;
+  font-family: inherit;
+  padding: 9px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.opt-chip:hover { border-color: var(--pink-mid); }
+.opt-chip.selected {
+  background: var(--pink);
+  border-color: var(--pink-dark);
+  color: var(--text);
+  font-weight: 500;
+}
+.opt-chip .extra { font-size: 11px; opacity: .75; margin-left: 4px; }
+.opt-missing-hint {
+  font-size: 12px;
+  color: var(--pink-dark);
+  margin-top: 4px;
+  display: none;
+}
+.opt-missing-hint.show { display: block; }
+
 /* ── DOMICILIOS ── */
 .dom-page { background: var(--cream); }
 
