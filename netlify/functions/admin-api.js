@@ -174,8 +174,11 @@ exports.handler = async (event) => {
             body: JSON.stringify({}),
           }
         );
-        result = await r.json();
-        if (!r.ok) throw new Error(JSON.stringify(result));
+        const raw = await r.json();
+        if (!r.ok) throw new Error(JSON.stringify(raw));
+        // La API cruda devuelve { url: "/storage/v1/object/upload/sign/..." } (ruta RELATIVA).
+        // La armamos completa aquí para que el frontend pueda usarla directo con fetch().
+        result = { signedURL: `${SUPABASE_URL}${raw.url}` };
         break;
       }
 

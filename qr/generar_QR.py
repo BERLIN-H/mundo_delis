@@ -2,7 +2,7 @@ import qrcode
 from PIL import Image, ImageDraw, ImageFont
 
 # URL
-url = "https://berlin-h.github.io/mundo_delis/"
+url = "https://mundo-delis.netlify.app/menu"
 
 # Crear QR
 qr = qrcode.QRCode(

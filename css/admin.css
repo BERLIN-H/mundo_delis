@@ -24,6 +24,7 @@
 
 html, body {
   min-height: 100vh;
+  min-height: 100dvh;
   font-family: 'Inter', sans-serif;
   background: #2A1820;
   color: var(--text);
@@ -32,6 +33,7 @@ html, body {
 /* ── AUTH GATE ── */
 #auth-gate {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,6 +54,7 @@ html, body {
 .admin-wrap {
   display: none;
   min-height: 100vh;
+  min-height: 100dvh;
   flex-direction: column;
   max-width: 480px;
   margin: 0 auto;

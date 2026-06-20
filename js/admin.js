@@ -501,7 +501,10 @@ async function handleImgFile(input) {
       headers: { 'Content-Type': file.type, 'x-upsert': 'true' },
       body: file,
     });
-    if (!uploadRes.ok) throw new Error('Error subiendo la imagen');
+    if (!uploadRes.ok) {
+      const detalle = await uploadRes.text().catch(() => '');
+      throw new Error(`Error subiendo la imagen (${uploadRes.status}): ${detalle}`);
+    }
     const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/imagenes/${path}`;
     document.getElementById('f-img').value     = publicUrl;
     document.getElementById('f-img-url').value = publicUrl;
