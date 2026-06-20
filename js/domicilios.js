@@ -44,9 +44,6 @@ const CATALOG = [
     { id:'w1', name:'Waffle Frutos Rojos',           price:25000, img:'../img/waffles/frutos-rojos.avif' },
     { id:'w2', name:'Waffle Arequipe Clásico',       price:25000, img:'../img/waffles/arequipe-clasico.avif' },
     { id:'w3', name:'Waffle Nutella',                price:25000, img:'../img/waffles/nutella.avif' },
-    { id:'w4', name:'Waffle de yuca',                price:25000, img:'../img/waffles/waffle-yuca.avif' },
-    { id:'w5', name:'Sándwich de yuca pollo en salsa blanca', price:27000, img:'../img/waffles/sandwich-yuca.avif' },
-    { id:'w6', name:'Bowl Frutal MD',                price:20000, img:'../img/waffles/bowl-frutal.avif' },
   ]},
   { id: 'bebidas', cat: 'Bebidas', icono: 'ti-bottle', prods: [
     { id:'b1', name:'Soda Hatsu',           price:17000, img:'../img/bebidas/soda-hatsu.avif' },
@@ -71,9 +68,9 @@ const CATALOG = [
     { id:'vc8', name:'Mojito',             price:28000, img:'../img/vinos-cafe/mojito.avif' },
   ]},
   { id: 'saludable', cat: 'Línea Saludable', icono: 'ti-salad', prods: [
-    { id:'s1', name:'Bowl Frutal MD',  price:20000, img:'../img/waffles/bowl-frutal.avif', desc:'Frutas frescas de temporada con granola y yogurt' },
-    { id:'s2', name:'Waffle de yuca',  price:25000, img:'../img/waffles/waffle-yuca.avif', desc:'Base de yuca, opción sin gluten' },
-    { id:'s3', name:'Sándwich de yuca pollo en salsa blanca', price:27000, img:'../img/waffles/sandwich-yuca.avif', desc:'Base de yuca con pollo en salsa blanca' },
+    { id:'s1', name:'Bowl Frutal MD',  price:20000, img:'../img/saludable/bowl-frutal.avif', desc:'Frutas frescas de temporada con granola y yogurt' },
+    { id:'s2', name:'Waffle de yuca',  price:25000, img:'../img/saludable/waffle-yuca.avif', desc:'Base de yuca, opción sin gluten' },
+    { id:'s3', name:'Sándwich de yuca pollo en salsa blanca', price:27000, img:'../img/saludable/sandwich-yuca.avif', desc:'Base de yuca con pollo en salsa blanca' },
   ]},
 ];
 

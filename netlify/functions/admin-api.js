@@ -171,6 +171,7 @@ exports.handler = async (event) => {
               'Authorization': `Bearer ${SUPABASE_SERVICE}`,
               'Content-Type':  'application/json',
             },
+            body: JSON.stringify({}),
           }
         );
         result = await r.json();
