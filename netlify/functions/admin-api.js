@@ -159,26 +159,30 @@ exports.handler = async (event) => {
         break;
       }
 
-      // ── STORAGE: generar URL firmada para subir ────────────
-      case 'storage.signedUpload': {
-        const { path } = payload;
+      // ── STORAGE: subir imagen vía servidor (evita problemas de CORS del navegador) ──
+      case 'storage.upload': {
+        const { path, base64, contentType } = payload;
+        if (!base64) throw new Error('No se recibió contenido de la imagen');
+
+        const buffer = Buffer.from(base64, 'base64');
+
         const r = await fetch(
-          `${SUPABASE_URL}/storage/v1/object/upload/sign/imagenes/${path}`,
+          `${SUPABASE_URL}/storage/v1/object/imagenes/${path}`,
           {
             method: 'POST',
             headers: {
               'apikey':        SUPABASE_SERVICE,
               'Authorization': `Bearer ${SUPABASE_SERVICE}`,
-              'Content-Type':  'application/json',
+              'Content-Type':  contentType || 'application/octet-stream',
+              'x-upsert':      'true',
             },
-            body: JSON.stringify({}),
+            body: buffer,
           }
         );
-        const raw = await r.json();
-        if (!r.ok) throw new Error(JSON.stringify(raw));
-        // La API cruda devuelve { url: "/storage/v1/object/upload/sign/..." } (ruta RELATIVA).
-        // La armamos completa aquí para que el frontend pueda usarla directo con fetch().
-        result = { signedURL: `${SUPABASE_URL}${raw.url}` };
+        const raw = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(raw.message || JSON.stringify(raw));
+
+        result = { publicUrl: `${SUPABASE_URL}/storage/v1/object/public/imagenes/${path}` };
         break;
       }
 

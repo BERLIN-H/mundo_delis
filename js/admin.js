@@ -482,30 +482,33 @@ function descargar(contenido, nombre, tipo) {
 async function handleImgFile(input) {
   const file = input.files[0];
   if (!file) return;
+
+  const MAX_MB = 4;
+  if (file.size > MAX_MB * 1024 * 1024) {
+    showToast(`La imagen pesa demasiado (máx. ${MAX_MB}MB). Comprímela e intenta de nuevo.`, true);
+    input.value = '';
+    return;
+  }
+
   const reader = new FileReader();
   reader.onload = e => {
     const img = document.getElementById('img-preview-img');
     img.src = e.target.result; img.style.display = 'block';
   };
   reader.readAsDataURL(file);
+
   const prog = document.getElementById('img-progress');
   prog.style.display = 'block';
   prog.textContent = '⬆️ Subiendo imagen…';
   prog.style.color = 'var(--gold)';
+
   try {
-    const ext  = file.name.split('.').pop().toLowerCase();
-    const path = `productos/${Date.now()}.${ext}`;
-    const { signedURL } = await api('storage.signedUpload', { path });
-    const uploadRes = await fetch(signedURL, {
-      method: 'PUT',
-      headers: { 'Content-Type': file.type, 'x-upsert': 'true' },
-      body: file,
-    });
-    if (!uploadRes.ok) {
-      const detalle = await uploadRes.text().catch(() => '');
-      throw new Error(`Error subiendo la imagen (${uploadRes.status}): ${detalle}`);
-    }
-    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/imagenes/${path}`;
+    const base64 = await fileToBase64(file);
+    const ext    = file.name.split('.').pop().toLowerCase();
+    const path   = `productos/${Date.now()}.${ext}`;
+
+    const { publicUrl } = await api('storage.upload', { path, base64, contentType: file.type });
+
     document.getElementById('f-img').value     = publicUrl;
     document.getElementById('f-img-url').value = publicUrl;
     prog.textContent = '✅ Imagen subida';
@@ -514,6 +517,16 @@ async function handleImgFile(input) {
     prog.textContent = '❌ Error: ' + e.message;
     prog.style.color = 'var(--danger)';
   }
+}
+
+// ── Convierte un File a base64 puro (sin el prefijo "data:...;base64,") ──
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 function syncImgUrl(val) {
