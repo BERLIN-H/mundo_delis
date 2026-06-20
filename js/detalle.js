@@ -51,12 +51,15 @@ async function init() {
 
     const catIcon = cat?.icono || 'ti-rosette';
     const badge   = badgeHtml(prod, newDays);
+    const tieneImg = prod.imagen_url && prod.imagen_url.trim() !== '';
 
     document.getElementById('detail-content').innerHTML = `
       <div class="detail-hero">
-        <img src="${prod.imagen_url}" alt="${prod.nombre}"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <i class="ti ${catIcon}" aria-hidden="true" style="display:none"></i>
+        ${tieneImg
+          ? `<img src="${prod.imagen_url}" alt="${prod.nombre}"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+          : ''}
+        <i class="ti ${catIcon}" aria-hidden="true" style="display:${tieneImg ? 'none' : 'flex'}"></i>
       </div>
       <div class="detail-body">
         <div class="detail-name">${prod.nombre}</div>

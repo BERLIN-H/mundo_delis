@@ -230,12 +230,15 @@ function renderPickerGrid(catId) {
   grid.innerHTML = prods.map(p => {
     const enPedido = pedido.filter(x => x.id === p.id);
     const qty = enPedido.reduce((a, x) => a + x.qty, 0);
+    const tieneImg = p.imagen_url && p.imagen_url.trim() !== '';
     return `
     <div class="picker-card" id="pcard-${p.id}">
       <div class="picker-card-img">
-        <img src="${p.imagen_url}" alt="${p.nombre}"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div class="picker-card-icon" style="display:none">
+        ${tieneImg
+          ? `<img src="${p.imagen_url}" alt="${p.nombre}"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+          : ''}
+        <div class="picker-card-icon" style="display:${tieneImg ? 'none' : 'flex'}">
           <i class="ti ${group.icono}"></i>
         </div>
         ${qty > 0 ? `<span class="picker-badge">${qty}</span>` : ''}

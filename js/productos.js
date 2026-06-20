@@ -56,12 +56,15 @@ async function init() {
 
     listEl.innerHTML = prods.map(p => {
       const badge = badgeHtml(p, newDays);
+      const tieneImg = p.imagen_url && p.imagen_url.trim() !== '';
       return `
         <a class="prod-item" href="/detalle?id=${p.id}">
           <div class="prod-thumb">
-            <img src="${p.imagen_url}" alt="${p.nombre}"
-                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-            <i class="ti ${cat.icono}" aria-hidden="true" style="display:none"></i>
+            ${tieneImg
+              ? `<img src="${p.imagen_url}" alt="${p.nombre}"
+                       onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+              : ''}
+            <i class="ti ${cat.icono}" aria-hidden="true" style="display:${tieneImg ? 'none' : 'inline-block'}"></i>
           </div>
           <div class="prod-info">
             <div class="prod-name">${p.nombre}${badge}</div>
