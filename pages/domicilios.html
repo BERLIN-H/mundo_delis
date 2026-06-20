@@ -115,6 +115,16 @@
   <div class="pb"></div>
 </div>
 
+<!-- MODAL: aviso genérico (reemplaza alert()) -->
+<div class="overlay" id="notice-overlay" onclick="closeNoticeOuter(event)">
+  <div class="notice-box">
+    <div class="notice-icon" id="notice-icon"><i class="ti ti-alert-circle"></i></div>
+    <div class="notice-title" id="notice-title">Atención</div>
+    <div class="notice-text" id="notice-text"></div>
+    <button class="notice-ok-btn" onclick="closeNotice()">Entendido</button>
+  </div>
+</div>
+
 <!-- PRODUCT PICKER MODAL -->
 <div class="overlay" id="overlay" onclick="closePickerOuter(event)">
   <div class="picker-sheet" id="picker-sheet">

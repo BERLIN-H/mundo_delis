@@ -436,7 +436,7 @@ function enviar() {
   // re-verificamos por si el estado cambió mientras la página estaba abierta.
   if (!ESTA_ABIERTO) {
     aplicarEstadoHorario();
-    alert('Lo sentimos, en este momento estamos cerrados. Revisa nuestro horario de atención.');
+    showNotice('En este momento estamos cerrados. Revisa nuestro horario de atención más abajo.', { title: 'Estamos cerrados' });
     return;
   }
 
@@ -445,14 +445,15 @@ function enviar() {
   const dir    = document.getElementById('inp-dir').value.trim();
   const nota   = document.getElementById('inp-nota').value.trim();
 
-  if (!nombre)                      { alert('Por favor ingresa tu nombre completo.');     return; }
-  if (!nombre.trim().includes(' '))  { alert('Por favor ingresa tu nombre y apellido.');    return; }
-  if (!tel)                 { alert('Por favor ingresa tu teléfono.');           return; }
-  if (!dir)                 { alert('Por favor ingresa la dirección de entrega.'); return; }
-  if (!pedido.length)       { alert('Agrega al menos un producto a tu pedido.');  return; }
-  if (!metodoPagoElegido)   {
+  if (!nombre)                       { showNotice('Por favor ingresa tu nombre completo.');  return; }
+  if (!nombre.trim().includes(' '))  { showNotice('Por favor ingresa tu nombre y apellido.'); return; }
+  if (!tel)                          { showNotice('Por favor ingresa tu número de teléfono.'); return; }
+  if (!dir)                          { showNotice('Por favor ingresa la dirección de entrega.'); return; }
+  if (!pedido.length)                { showNotice('Agrega al menos un producto a tu pedido antes de continuar.'); return; }
+  if (!metodoPagoElegido)            {
     document.getElementById('hint-pago').classList.add('show');
     document.getElementById('pago-options').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    showNotice('Por favor elige un método de pago para tu pedido.');
     return;
   }
 
@@ -460,22 +461,47 @@ function enviar() {
   const lines = pedido.map(x => {
     const opcionesTxt = x.opciones && x.opciones.length ? ` (${x.opciones.join(', ')})` : '';
     return `  • ${x.name}${opcionesTxt} x${x.qty} — ${fmt(x.price * x.qty)}`;
-  }).join('%0A');
+  }).join('\n');
 
+  // IMPORTANTE: construimos el texto con saltos de línea reales (\n) y emojis
+  // tal cual, SIN codificar nada a mano (%0A, etc). encodeURIComponent() de más
+  // abajo se encarga de codificar todo correctamente -- mezclar ambas formas
+  // es lo que rompía los emojis y tildes en el mensaje final de WhatsApp.
   let msg =
-    `🍰 *Nuevo pedido — Mundo Delis*%0A%0A` +
-    `👤 *Nombre:* ${nombre}%0A` +
-    `📞 *Teléfono:* ${tel}%0A` +
-    `📍 *Dirección:* ${dir}%0A` +
-    `💳 *Método de pago:* ${metodoPagoElegido}%0A%0A` +
-    `🛍️ *Pedido:*%0A${lines}%0A%0A` +
+    `🍰 *Nuevo pedido — Mundo Delis*\n\n` +
+    `👤 *Nombre:* ${nombre}\n` +
+    `📞 *Teléfono:* ${tel}\n` +
+    `📍 *Dirección:* ${dir}\n` +
+    `💳 *Método de pago:* ${metodoPagoElegido}\n\n` +
+    `🛍️ *Pedido:*\n${lines}\n\n` +
     `💰 *Total estimado:* ${fmt(total)}`;
 
-  if (nota) msg += `%0A%0A📝 *Nota:* ${nota}`;
+  if (nota) msg += `\n\n📝 *Nota:* ${nota}`;
 
   const WA_NUMBER = '573242601994';
-  window.location.href = `https://wa.me/${WA_NUMBER}?text=${msg}`;
+  window.location.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
 }
  
 // ── Inicialización ──
 initCatalogo();
+
+// ══════════════════════════════════════════════
+//  MODAL DE AVISO (reemplaza alert())
+// ══════════════════════════════════════════════
+function showNotice(text, opts = {}) {
+  const { title = 'Atención', success = false } = opts;
+  document.getElementById('notice-title').textContent = title;
+  document.getElementById('notice-text').textContent  = text;
+  const icon = document.getElementById('notice-icon');
+  icon.classList.toggle('success', success);
+  icon.innerHTML = `<i class="ti ${success ? 'ti-circle-check' : 'ti-alert-circle'}"></i>`;
+  document.getElementById('notice-overlay').classList.add('open');
+}
+
+function closeNotice() {
+  document.getElementById('notice-overlay').classList.remove('open');
+}
+
+function closeNoticeOuter(e) {
+  if (e.target === document.getElementById('notice-overlay')) closeNotice();
+}
