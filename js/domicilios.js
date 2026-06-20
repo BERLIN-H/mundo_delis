@@ -3,84 +3,17 @@
  * Archivo: js/domicilios.js
  */
 
-// ── CATÁLOGO LOCAL ──
-const CATALOG = [
-  { id: 'galleteria', cat: 'Galletería', icono: 'ti-cookie', prods: [
-    { id:'g1', name:'Merengues',               price:12000, img:'../img/galleteria/merengues.avif' },
-    { id:'g2', name:'Brownies',                price:8000,  img:'../img/galleteria/Brownies.avif' },
-    { id:'g3', name:'Pavlovas',                price:10000, img:'../img/galleteria/Pavlovas.avif' },
-    { id:'g4', name:'Alfajores',               price:3500,  img:'../img/galleteria/Alfajores.avif' },
-    { id:'g5', name:'Galletas de mantequilla', price:10000, img:'../img/galleteria/galletas-mantequilla.avif' },
-    { id:'g6', name:'New York cookies',        price:5000,  img:'../img/galleteria/new-york-cookies.avif' },
-  ]},
-  { id: 'postres', cat: 'Postres', icono: 'ti-cake', prods: [
-    { id:'p1',  name:'Tarta de Queso',            price:22000, img:'../img/postres/tarta-queso.avif' },
-    { id:'p2',  name:'Crema con durazno',          price:20000, img:'../img/postres/crema-durazno.avif' },
-    { id:'p3',  name:'Tres Leches Tradicional',    price:20000, img:'../img/postres/tres-leches.avif' },
-    { id:'p4',  name:'Arroz con Leche',            price:15000, img:'../img/postres/arroz-leche.avif' },
-    { id:'p5',  name:'Arequipe Fusión',            price:15000, img:'../img/postres/arequipe-fusion.avif' },
-    { id:'p6',  name:'Porción torta de zanahoria', price:17000, img:'../img/postres/torta-zanahoria.avif' },
-    { id:'p7',  name:'Brownie con helado',         price:20000, img:'../img/postres/brownie-helado.avif' },
-    { id:'p8',  name:'Genovesa',                   price:20000, img:'../img/postres/genovesa.avif' },
-    { id:'p9',  name:'Napoleón',                   price:17000, img:'../img/postres/napoleon.avif' },
-    { id:'p10', name:'Cuatro Leches',              price:18000, img:'../img/postres/cuatro-leches.avif' },
-    { id:'p11', name:'Pie de Limón',               price:18000, img:'../img/postres/pie-limon.avif' },
-    { id:'p12', name:'Flan de Caramelo',           price:18000, img:'../img/postres/flan-caramelo.avif' },
-    { id:'p13', name:'Porción de Torta Fría',      price:17000, img:'../img/postres/torta-fria.avif' },
-    { id:'p14', name:'Torta amapola y yogurt',     price:15000, img:'../img/postres/torta-amapola.avif' },
-    { id:'p15', name:'Fresas con crema',           price:22000, img:'../img/postres/fresas-crema.avif' },
-    { id:'p16', name:'Raspao MD',                  price:18000, img:'../img/postres/raspao.avif' },
-    { id:'p17', name:'Cremoso de Brownie',         price:15000, img:'../img/postres/cremoso-brownie.avif' },
-  ]},
-  { id: 'panaderia', cat: 'Panadería', icono: 'ti-bread', prods: [
-    { id:'pan1', name:'Salad Croissant',              price:25000, img:'../img/panaderia/salad-croissant.avif',  desc:'Croissant + jamón, queso, verduras y salsa' },
-    { id:'pan2', name:'Crookie',                      price:20000, img:'../img/panaderia/crookie.avif' },
-    { id:'pan3', name:'Paliquesos',                   price:8000,  img:'../img/panaderia/paliquesos.avif' },
-    { id:'pan4', name:'Rollos de jamón',              price:8000,  img:'../img/panaderia/rollos-jamon.avif' },
-    { id:'pan5', name:'Croissant de almendras',       price:20000, img:'../img/panaderia/croissant-almendras.avif' },
-    { id:'pan6', name:'Croissant de pollo en salsa blanca', price:27000, img:'../img/panaderia/croissant-pollo.avif' },
-  ]},
-  { id: 'waffles', cat: 'Waffles', icono: 'ti-waffle', prods: [
-    { id:'w1', name:'Waffle Frutos Rojos',           price:25000, img:'../img/waffles/frutos-rojos.avif' },
-    { id:'w2', name:'Waffle Arequipe Clásico',       price:25000, img:'../img/waffles/arequipe-clasico.avif' },
-    { id:'w3', name:'Waffle Nutella',                price:25000, img:'../img/waffles/nutella.avif' },
-  ]},
-  { id: 'bebidas', cat: 'Bebidas', icono: 'ti-bottle', prods: [
-    { id:'b1', name:'Soda Hatsu',           price:17000, img:'../img/bebidas/soda-hatsu.avif' },
-    { id:'b2', name:'JP Chenet Rosé 250ml', price:25000, img:'../img/bebidas/jp-chenet-rose.avif' },
-    { id:'b3', name:'Coca Cola 250ml',      price:5000,  img:'../img/bebidas/coca-cola.avif' },
-    { id:'b4', name:'Coca Cola Zero 250ml', price:5000,  img:'../img/bebidas/coca-cola-zero.avif' },
-    { id:'b5', name:'Agua 310ml',           price:4000,  img:'../img/bebidas/agua.avif' },
-    { id:'b6', name:'Soda Bretaña 300ml',   price:8000,  img:'../img/bebidas/soda-bretana.avif' },
-    { id:'b7', name:'Sodas Frutales MD',    price:15000, img:'../img/bebidas/sodas-frutales.avif', desc:'Sabores: Fresa-limón, Maracupiña, Frutos Amarillos' },
-    { id:'b8', name:'Jugo de Fresa',        price:12000, img:'../img/bebidas/jugo-fresa.avif' },
-    { id:'b9', name:'Malteada de Vainilla', price:16000, img:'../img/bebidas/malteada-vainilla.avif' },
-    { id:'b10',name:'Malteada ChocoBrownie',price:16000, img:'../img/bebidas/malteada-chocobrownie.avif' },
-  ]},
-  { id: 'vinos-cafe', cat: 'Vinos y Café', icono: 'ti-glass-full', prods: [
-    { id:'vc1', name:'Capuccino',          price:8000,  img:'../img/vinos-cafe/capuccino.avif' },
-    { id:'vc2', name:'Café',               price:5000,  img:'../img/vinos-cafe/cafe.avif' },
-    { id:'vc3', name:'Tinto de verano',    price:30000, img:'../img/vinos-cafe/tinto-verano.avif' },
-    { id:'vc4', name:'Sangría MD',         price:35000, img:'../img/vinos-cafe/sangria-md.avif' },
-    { id:'vc5', name:'Margarita Fresa',    price:30000, img:'../img/vinos-cafe/margarita-fresa.avif' },
-    { id:'vc6', name:'Aperol Spritz',      price:33000, img:'../img/vinos-cafe/aperol-spritz.avif' },
-    { id:'vc7', name:'Pop Champagne Rose', price:35000, img:'../img/vinos-cafe/pop-champagne.avif' },
-    { id:'vc8', name:'Mojito',             price:28000, img:'../img/vinos-cafe/mojito.avif' },
-  ]},
-  { id: 'saludable', cat: 'Línea Saludable', icono: 'ti-salad', prods: [
-    { id:'s1', name:'Bowl Frutal MD',  price:20000, img:'../img/saludable/bowl-frutal.avif', desc:'Frutas frescas de temporada con granola y yogurt' },
-    { id:'s2', name:'Waffle de yuca',  price:25000, img:'../img/saludable/waffle-yuca.avif', desc:'Base de yuca, opción sin gluten' },
-    { id:'s3', name:'Sándwich de yuca pollo en salsa blanca', price:27000, img:'../img/saludable/sandwich-yuca.avif', desc:'Base de yuca con pollo en salsa blanca' },
-  ]},
-];
-
 // ── ESTADO ──
 let CATEGORIAS = [];   // [{id, nombre, icono, orden}]
 let PRODUCTOS  = {};   // { catId: [producto, ...] }
 let OPCIONES_CACHE = {}; // { productoId: [{id, titulo, obligatorio, valores}] }
 let pedido     = [];   // [{ uid, id, name, price, img, qty, opciones: ["titulo: valor", ...] }]
 let activeCat  = null;
- 
+let HORARIO    = null;  // objeto de horario semanal cargado desde ajustes
+let ESTA_ABIERTO = false;
+let METODOS_PAGO = [];
+let metodoPagoElegido = null;
+
 // Estado temporal del modal de opciones (mientras el usuario elige sabor/tipo)
 let optDraft = null; // { prod, opciones, seleccion: {opcionId: valorId} }
  
@@ -89,22 +22,120 @@ let optDraft = null; // { prod, opciones, seleccion: {opcionId: valorId} }
 // ══════════════════════════════════════════════
 async function initCatalogo() {
   try {
-    const [cats, prods] = await Promise.all([
+    const [cats, prods, horario, metodos] = await Promise.all([
       sbGet('/categorias?select=*&order=orden.asc'),
       sbGet('/productos?select=*&visible=eq.true&order=created_at.asc'),
+      cargarHorarioSemana(),
+      cargarMetodosPago(),
     ]);
- 
+
     CATEGORIAS = cats;
     PRODUCTOS  = prods.reduce((acc, p) => {
       (acc[p.categoria_id] = acc[p.categoria_id] || []).push(p);
       return acc;
     }, {});
- 
+
     activeCat = CATEGORIAS[0]?.id || null;
+
+    HORARIO = horario;
+    METODOS_PAGO = metodos || [];
+    aplicarEstadoHorario();
+    renderHorarioCard();
+    renderMetodosPago();
+
     aplicarPrefill();
   } catch (e) {
     console.error('Error cargando catálogo:', e);
   }
+}
+
+// ── Calcula si está abierto AHORA y actualiza el badge + botón de enviar ──
+function aplicarEstadoHorario() {
+  const dot   = document.getElementById('status-dot');
+  const txt   = document.getElementById('status-txt');
+  const banner = document.getElementById('closed-banner');
+  const bannerTxt = document.getElementById('closed-banner-text');
+  const btn   = document.getElementById('send-btn');
+  const btnTxt = document.getElementById('send-btn-text');
+  const helper = document.getElementById('send-helper');
+
+  if (!HORARIO) {
+    txt.textContent = 'Horario no disponible';
+    return;
+  }
+
+  const { abierto, dia } = calcularEstadoHorario(HORARIO);
+  ESTA_ABIERTO = abierto;
+
+  dot.className = 'status-dot ' + (abierto ? 'dot-open' : 'dot-closed');
+  txt.textContent = abierto ? 'Abierto ahora' : 'Cerrado en este momento';
+
+  if (abierto) {
+    banner.style.display = 'none';
+    btn.disabled = false;
+    btnTxt.textContent = 'Enviar pedido por WhatsApp';
+    helper.textContent = 'Al enviar se abrirá WhatsApp con el resumen de tu pedido listo para enviar.';
+  } else {
+    banner.style.display = 'flex';
+    btn.disabled = true;
+    btnTxt.textContent = 'Cerrado en este momento';
+    if (dia && dia.abierto) {
+      bannerTxt.textContent = `Estamos cerrados por ahora. Hoy atendemos de ${horaLegible(dia.apertura)} a ${horaLegible(dia.cierre)}.`;
+    } else {
+      bannerTxt.textContent = 'No atendemos domicilios hoy. Revisa nuestro horario abajo.';
+    }
+    helper.textContent = 'No podrás enviar tu pedido hasta que estemos abiertos.';
+  }
+}
+
+// ── Renderiza la tabla de horario dentro del card de "Horario de domicilios" ──
+function renderHorarioCard() {
+  const cont = document.getElementById('dom-schedule-rows');
+  if (!HORARIO) { cont.innerHTML = ''; return; }
+
+  const orden = [1, 2, 3, 4, 5, 6, 0]; // empieza en Lunes
+  const dias  = orden.map(i => ({ idx: i, ...HORARIO[String(i)] }));
+
+  const grupos = [];
+  let actual = null;
+  dias.forEach(d => {
+    const key = d.abierto ? `${d.apertura}-${d.cierre}` : 'cerrado';
+    if (actual && actual.key === key) actual.dias.push(d.idx);
+    else { actual = { key, dias: [d.idx], abierto: d.abierto, apertura: d.apertura, cierre: d.cierre }; grupos.push(actual); }
+  });
+
+  cont.innerHTML = grupos.map(g => {
+    const nombres = g.dias.map(i => NOMBRES_DIA[i]);
+    const etiqueta = nombres.length > 1 ? `${nombres[0]} – ${nombres[nombres.length - 1]}` : nombres[0];
+    const horarioTxt = g.abierto ? `${horaLegible(g.apertura)} – ${horaLegible(g.cierre)}` : 'Cerrado';
+    return `<div class="info-row"><i class="ti ti-calendar"></i><span>${etiqueta}: ${horarioTxt}</span></div>`;
+  }).join('');
+}
+
+// ── Renderiza los chips de método de pago ──
+function renderMetodosPago() {
+  const cont = document.getElementById('pago-options');
+  if (!METODOS_PAGO.length) {
+    cont.innerHTML = `<span style="font-size:13px;color:var(--text-soft);">No hay métodos de pago configurados</span>`;
+    return;
+  }
+  cont.innerHTML = METODOS_PAGO.map(m => `
+    <button type="button" class="opt-chip" id="pago-chip-${cssEscape(m)}" onclick="elegirMetodoPago('${m.replace(/'/g, "\\'")}')">
+      ${m}
+    </button>`).join('');
+}
+
+function elegirMetodoPago(metodo) {
+  metodoPagoElegido = metodo;
+  METODOS_PAGO.forEach(m => {
+    document.getElementById(`pago-chip-${cssEscape(m)}`).classList.toggle('selected', m === metodo);
+  });
+  document.getElementById('hint-pago').classList.remove('show');
+}
+
+// ── Sanitiza un string para usarlo como parte de un id de elemento ──
+function cssEscape(s) {
+  return s.replace(/[^a-zA-Z0-9]/g, '_');
 }
  
 // ── Si venimos de detalle.html con un producto + opciones ya elegidas, lo agregamos directo ──
@@ -401,32 +432,47 @@ function pickerListo() {
 //  ENVIAR POR WHATSAPP
 // ══════════════════════════════════════════════
 function enviar() {
+  // Defensa adicional: aunque el botón esté disabled si está cerrado,
+  // re-verificamos por si el estado cambió mientras la página estaba abierta.
+  if (!ESTA_ABIERTO) {
+    aplicarEstadoHorario();
+    alert('Lo sentimos, en este momento estamos cerrados. Revisa nuestro horario de atención.');
+    return;
+  }
+
   const nombre = document.getElementById('inp-nombre').value.trim();
   const tel    = document.getElementById('inp-tel').value.trim();
   const dir    = document.getElementById('inp-dir').value.trim();
   const nota   = document.getElementById('inp-nota').value.trim();
- 
-  if (!nombre)       { alert('Por favor ingresa tu nombre.');            return; }
-  if (!tel)          { alert('Por favor ingresa tu teléfono.');          return; }
-  if (!dir)          { alert('Por favor ingresa la dirección de entrega.'); return; }
-  if (!pedido.length){ alert('Agrega al menos un producto a tu pedido.'); return; }
- 
+
+  if (!nombre)                      { alert('Por favor ingresa tu nombre completo.');     return; }
+  if (!nombre.trim().includes(' '))  { alert('Por favor ingresa tu nombre y apellido.');    return; }
+  if (!tel)                 { alert('Por favor ingresa tu teléfono.');           return; }
+  if (!dir)                 { alert('Por favor ingresa la dirección de entrega.'); return; }
+  if (!pedido.length)       { alert('Agrega al menos un producto a tu pedido.');  return; }
+  if (!metodoPagoElegido)   {
+    document.getElementById('hint-pago').classList.add('show');
+    document.getElementById('pago-options').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
   const total = pedido.reduce((a, x) => a + x.price * x.qty, 0);
   const lines = pedido.map(x => {
     const opcionesTxt = x.opciones && x.opciones.length ? ` (${x.opciones.join(', ')})` : '';
     return `  • ${x.name}${opcionesTxt} x${x.qty} — ${fmt(x.price * x.qty)}`;
   }).join('%0A');
- 
+
   let msg =
     `🍰 *Nuevo pedido — Mundo Delis*%0A%0A` +
     `👤 *Nombre:* ${nombre}%0A` +
     `📞 *Teléfono:* ${tel}%0A` +
-    `📍 *Dirección:* ${dir}%0A%0A` +
+    `📍 *Dirección:* ${dir}%0A` +
+    `💳 *Método de pago:* ${metodoPagoElegido}%0A%0A` +
     `🛍️ *Pedido:*%0A${lines}%0A%0A` +
     `💰 *Total estimado:* ${fmt(total)}`;
- 
+
   if (nota) msg += `%0A%0A📝 *Nota:* ${nota}`;
- 
+
   const WA_NUMBER = '573242601994';
   window.location.href = `https://wa.me/${WA_NUMBER}?text=${msg}`;
 }

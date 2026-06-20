@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <link rel="stylesheet" href="../css/frontend.css">
+  <script src="../config.js"></script>
 </head>
 <body>
 
@@ -45,9 +46,8 @@
       <span id="status-txt">Verificando...</span>
     </div>
 
-    <div class="schedule-table">
-      <div class="sched-row"><span>Lunes – Viernes</span><span>8:00am – 8:00pm</span></div>
-      <div class="sched-row"><span>Sábado – Domingo</span><span>9:00am – 6:00pm</span></div>
+    <div class="schedule-table" id="schedule-table">
+      <div class="sched-row"><span>Cargando horario…</span><span></span></div>
     </div>
 
     <div class="loc-btns">
@@ -63,6 +63,7 @@
   <div class="pb"></div>
 </div>
 
+<script src="../js/utils.js"></script>
 <script src="../js/ubicacion.js"></script>
 </body>
 </html>

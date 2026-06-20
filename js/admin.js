@@ -10,7 +10,7 @@ const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
 let SESSION     = null;
-let STATE       = { cats: [], prods: [], newDays: 14 };
+let STATE       = { cats: [], prods: [], newDays: 14, horario: null, metodosPago: [] };
 let activeTab   = 'resumen';
 let activeFilter = 'all';
 
@@ -115,9 +115,26 @@ async function loadAll() {
     STATE.prods   = prods;
     STATE.newDays = parseInt(ajustes.find(a => a.clave === 'new_days')?.valor || '14');
     document.getElementById('new-days-val').value = STATE.newDays;
+
+    STATE.horario = parseAjusteJSON(ajustes, 'horario_semana', horarioPorDefecto());
+    STATE.metodosPago = parseAjusteJSON(ajustes, 'metodos_pago', []);
+    renderHorarioRows();
+    renderPagoRows();
   } finally {
     showLoading(false);
   }
+}
+
+// ── Parsea de forma segura el valor JSON de una clave de ajustes ──
+function parseAjusteJSON(ajustes, clave, fallback) {
+  const raw = ajustes.find(a => a.clave === clave)?.valor;
+  if (!raw) return fallback;
+  try { return JSON.parse(raw); } catch { return fallback; }
+}
+
+function horarioPorDefecto() {
+  const dia = { abierto: true, apertura: '08:00', cierre: '20:00' };
+  return { '0': {...dia}, '1': {...dia}, '2': {...dia}, '3': {...dia}, '4': {...dia}, '5': {...dia}, '6': {...dia} };
 }
 
 // ══════════════════════════════════════════════════════
@@ -433,6 +450,114 @@ async function saveNewDays() {
     await api('ajustes.update', { clave: 'new_days', valor: String(v) });
     STATE.newDays = v;
     showToast('Guardado ✓');
+  } catch (e) { showToast('Error: ' + e.message, true); }
+  finally { showLoading(false); }
+}
+
+// ══════════════════════════════════════════════════════
+//  HORARIO DE ATENCIÓN
+// ══════════════════════════════════════════════════════
+const NOMBRES_DIA_ADMIN = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+const ORDEN_DIAS = [1, 2, 3, 4, 5, 6, 0]; // empieza en Lunes para mostrar
+
+function renderHorarioRows() {
+  const cont = document.getElementById('horario-rows');
+  if (!STATE.horario) return;
+
+  cont.innerHTML = ORDEN_DIAS.map(i => {
+    const dia = STATE.horario[String(i)] || { abierto: false, apertura: '08:00', cierre: '20:00' };
+    return `
+    <div class="setting-row" id="horario-row-${i}">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;">
+        <button class="toggle ${dia.abierto ? 'on' : ''}" id="horario-toggle-${i}"
+          onclick="toggleHorarioDia(${i})"></button>
+        <span class="setting-label" style="min-width:78px;">${NOMBRES_DIA_ADMIN[i]}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;" id="horario-times-${i}">
+        <input type="time" class="field-input" id="horario-apertura-${i}" value="${dia.apertura}"
+               style="width:100px;padding:6px 8px;font-size:12px;" ${dia.abierto ? '' : 'disabled'}>
+        <span style="font-size:12px;color:var(--text-soft);">–</span>
+        <input type="time" class="field-input" id="horario-cierre-${i}" value="${dia.cierre}"
+               style="width:100px;padding:6px 8px;font-size:12px;" ${dia.abierto ? '' : 'disabled'}>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleHorarioDia(i) {
+  const toggle = document.getElementById(`horario-toggle-${i}`);
+  toggle.classList.toggle('on');
+  const abierto = toggle.classList.contains('on');
+  document.getElementById(`horario-apertura-${i}`).disabled = !abierto;
+  document.getElementById(`horario-cierre-${i}`).disabled = !abierto;
+}
+
+async function saveHorario() {
+  const nuevo = {};
+  for (let i = 0; i < 7; i++) {
+    const abierto = document.getElementById(`horario-toggle-${i}`).classList.contains('on');
+    const apertura = document.getElementById(`horario-apertura-${i}`).value || '08:00';
+    const cierre   = document.getElementById(`horario-cierre-${i}`).value || '20:00';
+    if (abierto && apertura >= cierre) {
+      showToast(`${NOMBRES_DIA_ADMIN[i]}: la hora de cierre debe ser después de la apertura`, true);
+      return;
+    }
+    nuevo[String(i)] = { abierto, apertura, cierre };
+  }
+
+  showLoading(true);
+  try {
+    await api('ajustes.update', { clave: 'horario_semana', valor: JSON.stringify(nuevo) });
+    STATE.horario = nuevo;
+    showToast('Horario actualizado ✓');
+  } catch (e) { showToast('Error: ' + e.message, true); }
+  finally { showLoading(false); }
+}
+
+// ══════════════════════════════════════════════════════
+//  MÉTODOS DE PAGO
+// ══════════════════════════════════════════════════════
+function renderPagoRows() {
+  const cont = document.getElementById('pago-rows');
+  if (!STATE.metodosPago.length) {
+    cont.innerHTML = `<div style="font-size:13px;color:var(--text-soft);">Aún no has agregado métodos de pago</div>`;
+    return;
+  }
+  cont.innerHTML = STATE.metodosPago.map((m, i) => `
+    <div class="setting-row">
+      <span class="setting-label">${m}</span>
+      <button class="icon-btn danger" onclick="quitarMetodoPago(${i})" title="Quitar">
+        <i class="ti ti-trash"></i>
+      </button>
+    </div>`).join('');
+}
+
+async function agregarMetodoPago() {
+  const input = document.getElementById('nuevo-metodo-pago');
+  const valor = input.value.trim();
+  if (!valor) { showToast('Escribe un nombre para el método de pago', true); return; }
+  if (STATE.metodosPago.includes(valor)) { showToast('Ese método ya está en la lista', true); return; }
+
+  const nuevaLista = [...STATE.metodosPago, valor];
+  showLoading(true);
+  try {
+    await api('ajustes.update', { clave: 'metodos_pago', valor: JSON.stringify(nuevaLista) });
+    STATE.metodosPago = nuevaLista;
+    input.value = '';
+    renderPagoRows();
+    showToast('Método de pago agregado ✓');
+  } catch (e) { showToast('Error: ' + e.message, true); }
+  finally { showLoading(false); }
+}
+
+async function quitarMetodoPago(idx) {
+  const nuevaLista = STATE.metodosPago.filter((_, i) => i !== idx);
+  showLoading(true);
+  try {
+    await api('ajustes.update', { clave: 'metodos_pago', valor: JSON.stringify(nuevaLista) });
+    STATE.metodosPago = nuevaLista;
+    renderPagoRows();
+    showToast('Método de pago eliminado ✓');
   } catch (e) { showToast('Error: ' + e.message, true); }
   finally { showLoading(false); }
 }

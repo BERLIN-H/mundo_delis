@@ -515,7 +515,12 @@ a { text-decoration: none; color: inherit; }
 }
 .send-btn:active { opacity: .85; }
 .send-btn i { font-size: 20px; }
-.send-btn:disabled { opacity: .5; cursor: not-allowed; }
+.send-btn:disabled {
+  background: var(--cream-b);
+  color: var(--text-soft);
+  cursor: not-allowed;
+  opacity: 1;
+}
 
 /* ── PRODUCT PICKER MODAL (domicilios) ── */
 .overlay {
@@ -641,6 +646,26 @@ a { text-decoration: none; color: inherit; }
 .status-dot { width: 8px; height: 8px; border-radius: 50%; }
 .dot-open   { background: #3A9A4A; }
 .dot-closed { background: #E24B4A; }
+
+/* Variante de status-pill sobre fondos de color (ej. dom-hero) */
+.dom-hero .status-pill {
+  background: rgba(255,255,255,.92);
+  color: var(--text);
+  font-weight: 500;
+}
+
+.dom-closed-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #FDECEC;
+  color: #B23A39;
+  font-size: 13px;
+  padding: 12px 16px;
+  margin: 16px 16px 0;
+  border-radius: 10px;
+}
+.dom-closed-banner i { font-size: 18px; flex-shrink: 0; }
 
 .schedule-table {
   margin-top: 14px;

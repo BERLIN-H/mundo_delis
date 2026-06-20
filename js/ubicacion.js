@@ -1,23 +1,56 @@
 /**
  * MUNDO DELIS · Ubicacion Page Logic
  * Archivo: js/ubicacion.js
- * Estado abierto/cerrado según hora Colombia (UTC-5)
+ * Estado abierto/cerrado y tabla de horario, según configuración del Admin.
  */
 
-(function () {
-  const now   = new Date();
-  const utcH  = now.getUTCHours();
-  const utcM  = now.getUTCMinutes();
-  const totalMin = (utcH * 60 + utcM) - 5 * 60; // minutos desde medianoche en CO
-  const coMin    = ((totalMin % 1440) + 1440) % 1440;
-  const day      = (now.getUTCDay() + (totalMin < 0 ? -1 : 0) + 7) % 7; // 0=Dom, 1=Lun…
-
-  let open = false;
-  if (day >= 1 && day <= 5 && coMin >= 480 && coMin < 1200) open = true; // Lun-Vie 8-20h
-  if ((day === 0 || day === 6) && coMin >= 540 && coMin < 1080) open = true; // Sab-Dom 9-18h
-
+(async function () {
   const dot = document.getElementById('status-dot');
   const txt = document.getElementById('status-txt');
-  dot.className = 'status-dot ' + (open ? 'dot-open' : 'dot-closed');
-  txt.textContent = open ? 'Abierto ahora' : 'Cerrado en este momento';
+  const tabla = document.getElementById('schedule-table');
+
+  const horario = await cargarHorarioSemana();
+
+  if (!horario) {
+    txt.textContent = 'Horario no disponible';
+    tabla.innerHTML = '';
+    return;
+  }
+
+  const { abierto } = calcularEstadoHorario(horario);
+  dot.className = 'status-dot ' + (abierto ? 'dot-open' : 'dot-closed');
+  txt.textContent = abierto ? 'Abierto ahora' : 'Cerrado en este momento';
+
+  tabla.innerHTML = agruparHorario(horario);
 })();
+
+// ── Agrupa días consecutivos con el mismo horario, ej: "Lunes – Viernes: 8:00am – 8:00pm" ──
+function agruparHorario(horario) {
+  // Reordena empezando en Lunes (1) para que se vea natural: Lun..Dom
+  const orden = [1, 2, 3, 4, 5, 6, 0];
+  const dias  = orden.map(i => ({ idx: i, ...horario[String(i)] }));
+
+  const grupos = [];
+  let actual = null;
+
+  dias.forEach(d => {
+    const key = d.abierto ? `${d.apertura}-${d.cierre}` : 'cerrado';
+    if (actual && actual.key === key) {
+      actual.dias.push(d.idx);
+    } else {
+      actual = { key, dias: [d.idx], abierto: d.abierto, apertura: d.apertura, cierre: d.cierre };
+      grupos.push(actual);
+    }
+  });
+
+  return grupos.map(g => {
+    const nombres = g.dias.map(i => NOMBRES_DIA[i]);
+    const etiqueta = nombres.length > 1
+      ? `${nombres[0]} – ${nombres[nombres.length - 1]}`
+      : nombres[0];
+    const horarioTxt = g.abierto
+      ? `${horaLegible(g.apertura)} – ${horaLegible(g.cierre)}`
+      : 'Cerrado';
+    return `<div class="sched-row"><span>${etiqueta}</span><span>${horarioTxt}</span></div>`;
+  }).join('');
+}

@@ -108,6 +108,32 @@
             </button>
           </div>
         </div>
+
+        <!-- HORARIO DE ATENCIÓN -->
+        <div class="settings-card">
+          <h3><i class="ti ti-clock"></i> Horario de domicilios</h3>
+          <div id="horario-rows"></div>
+          <div class="setting-row">
+            <div></div>
+            <button class="add-btn" onclick="saveHorario()" style="padding:8px 14px;font-size:12px">
+              <i class="ti ti-device-floppy"></i> Guardar horario
+            </button>
+          </div>
+        </div>
+
+        <!-- MÉTODOS DE PAGO -->
+        <div class="settings-card">
+          <h3><i class="ti ti-credit-card"></i> Métodos de pago</h3>
+          <div id="pago-rows" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+          <div class="setting-row">
+            <input class="field-input" type="text" id="nuevo-metodo-pago" placeholder="Ej: Daviplata"
+                   style="flex:1;margin-right:8px;">
+            <button class="add-btn" onclick="agregarMetodoPago()" style="padding:8px 14px;font-size:12px">
+              <i class="ti ti-plus"></i> Agregar
+            </button>
+          </div>
+        </div>
+
         <div class="settings-card">
           <h3><i class="ti ti-shield-lock"></i> Sesión activa</h3>
           <div class="setting-row">

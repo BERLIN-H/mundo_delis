@@ -29,6 +29,15 @@
     <i class="ti ti-motorbike" aria-hidden="true"></i>
     <h2>Pedidos a domicilio</h2>
     <p>Completa el formulario y te enviamos el resumen por WhatsApp</p>
+    <div class="status-pill" id="status-pill" style="margin-top:10px;">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-txt">Verificando horario…</span>
+    </div>
+  </div>
+
+  <div class="dom-closed-banner" id="closed-banner" style="display:none;">
+    <i class="ti ti-clock-pause" aria-hidden="true"></i>
+    <span id="closed-banner-text">Estamos cerrados en este momento. Puedes ver nuestro horario abajo.</span>
   </div>
 
   <div class="dom-form-wrap">
@@ -36,8 +45,9 @@
     <!-- Info horario -->
     <div class="dom-card">
       <h3><i class="ti ti-clock" aria-hidden="true"></i> Horario de domicilios</h3>
-      <div class="info-row"><i class="ti ti-calendar"></i><span>Lunes – Viernes: 8:00am – 8:00pm</span></div>
-      <div class="info-row"><i class="ti ti-calendar"></i><span>Sábado – Domingo: 9:00am – 6:00pm</span></div>
+      <div id="dom-schedule-rows">
+        <div class="info-row"><i class="ti ti-loader"></i><span>Cargando horario…</span></div>
+      </div>
       <div class="info-row"><i class="ti ti-map-pin"></i><span>Cobertura dentro de Riohacha</span></div>
     </div>
 
@@ -45,7 +55,7 @@
     <div class="dom-card">
       <h3><i class="ti ti-user" aria-hidden="true"></i> Tus datos</h3>
       <div class="form-group" style="margin-bottom:10px;">
-        <label class="form-label" for="inp-nombre">Nombre completo *</label>
+        <label class="form-label" for="inp-nombre">Nombre y apellido *</label>
         <input class="form-input" id="inp-nombre" type="text" placeholder="Ej: María García" autocomplete="name">
       </div>
       <div class="form-group" style="margin-bottom:10px;">
@@ -75,6 +85,15 @@
       </div>
     </div>
 
+    <!-- Método de pago -->
+    <div class="dom-card">
+      <h3><i class="ti ti-credit-card" aria-hidden="true"></i> Método de pago *</h3>
+      <div id="pago-options" class="opt-chip-row">
+        <span style="font-size:13px;color:var(--text-soft);">Cargando opciones…</span>
+      </div>
+      <span class="opt-missing-hint" id="hint-pago">Por favor elige un método de pago</span>
+    </div>
+
     <!-- Nota adicional -->
     <div class="dom-card">
       <h3><i class="ti ti-notes" aria-hidden="true"></i> Nota adicional</h3>
@@ -82,11 +101,12 @@
     </div>
 
     <!-- Botón enviar -->
-    <button class="send-btn" id="send-btn" onclick="enviar()">
-      <i class="ti ti-brand-whatsapp" aria-hidden="true"></i> Enviar pedido por WhatsApp
+    <button class="send-btn" id="send-btn" onclick="enviar()" disabled>
+      <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
+      <span id="send-btn-text">Verificando horario…</span>
     </button>
 
-    <p style="font-size:11px;color:var(--text-soft);text-align:center;padding:0 8px 4px;">
+    <p style="font-size:11px;color:var(--text-soft);text-align:center;padding:0 8px 4px;" id="send-helper">
       Al enviar se abrirá WhatsApp con el resumen de tu pedido listo para enviar.
     </p>
 
