@@ -219,39 +219,44 @@ html, body {
 
 /* ── HORARIO — filas mejoradas para móvil ── */
 .horario-row {
-  display: flex; align-items: center;
-  padding: 12px 0; border-bottom: 1px solid var(--cream-b);
-  gap: 10px;
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--cream-b);
+  gap: 8px;
 }
 .horario-row:last-child { border-bottom: none; }
 
 .horario-day-name {
   font-size: 13px; font-weight: 500; color: var(--text);
-  width: 72px; flex-shrink: 0;
+  width: 76px; flex-shrink: 0;
 }
 
 .horario-times {
-  display: flex; align-items: center; gap: 6px; flex: 1;
+  display: flex; align-items: center; gap: 4px; flex: 1;
 }
 
-/* inputs de hora más compactos */
-.time-input {
+/* select de hora — más compacto que input[type=time] en móvil */
+.time-select {
   flex: 1;
   min-width: 0;
   border: 1.5px solid var(--cream-b);
   border-radius: 8px;
-  padding: 7px 6px;
-  font-size: 13px;
+  padding: 7px 4px;
+  font-size: 12px;
   font-family: 'Inter', sans-serif;
   color: var(--text);
   background: var(--cream);
   outline: none;
+  appearance: none;
+  -webkit-appearance: none;
   text-align: center;
+  cursor: pointer;
   transition: border-color .15s;
 }
-.time-input:focus  { border-color: var(--gold-mid); }
-.time-input:disabled { opacity: .35; background: var(--cream-b); }
-.time-sep { font-size: 12px; color: var(--text-soft); flex-shrink: 0; }
+.time-select:focus   { border-color: var(--gold-mid); }
+.time-select:disabled { opacity: .35; background: var(--cream-b); pointer-events: none; }
+.time-sep { font-size: 11px; color: var(--text-soft); flex-shrink: 0; }
 
 /* ── TOGGLE ── */
 .toggle {

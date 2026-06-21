@@ -9,12 +9,12 @@ const SUPABASE_ANON = window.SUPABASE_ANON;
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
-let SESSION     = null;
-let STATE       = { cats: [], prods: [], newDays: 14, horario: null, metodosPago: [] };
-let activeTab   = 'resumen';
+let SESSION      = null;
+let STATE        = { cats: [], prods: [], newDays: 14, horario: null, metodosPago: [] };
+let activeTab    = 'resumen';
 let activeFilter = 'all';
 
-// ── API CALL (a Netlify Function) ──
+// ── API CALL ──
 async function api(action, payload) {
   const token = SESSION?.access_token;
   const r = await fetch('/api/admin-api', {
@@ -27,7 +27,6 @@ async function api(action, payload) {
   return json.data;
 }
 
-// ── SUPABASE GET (lectura pública) ──
 async function sbGet(path) {
   const r = await fetch(`${SUPABASE_URL}/rest/v1${path}`, {
     headers: {
@@ -40,10 +39,9 @@ async function sbGet(path) {
 }
 
 // ══════════════════════════════════════════════════════
-//  VERIFICACIÓN DE SESIÓN (auto-ejecuta al cargar)
+//  SESIÓN
 // ══════════════════════════════════════════════════════
 (async () => {
-  // Procesar callback de Google OAuth (tokens en el hash de la URL)
   const hashParams = new URLSearchParams(window.location.hash.slice(1));
   if (hashParams.get('access_token')) {
     await sb.auth.setSession({
@@ -53,20 +51,11 @@ async function sbGet(path) {
     window.history.replaceState(null, '', window.location.pathname);
   }
 
-  // getUser() consulta el servidor — trae el rol más reciente
   const { data: { user }, error: userError } = await sb.auth.getUser();
-
-  if (userError || !user) {
-    window.location.href = '/login';
-    return;
-  }
+  if (userError || !user) { window.location.href = '/login'; return; }
 
   const rol = user.app_metadata?.rol || user.user_metadata?.rol;
-  if (rol !== 'ADMIN') {
-    await sb.auth.signOut();
-    window.location.href = '/login?err=no-admin';
-    return;
-  }
+  if (rol !== 'ADMIN') { await sb.auth.signOut(); window.location.href = '/login?err=no-admin'; return; }
 
   const { data: { session } } = await sb.auth.getSession();
   SESSION = session;
@@ -75,13 +64,10 @@ async function sbGet(path) {
   const name   = user.user_metadata?.nombre || user.user_metadata?.full_name || email;
   const avatar = user.user_metadata?.avatar_url;
 
-  document.getElementById('user-email-bar').textContent = name;
+  document.getElementById('user-email-bar').textContent    = name;
   document.getElementById('session-user-label').textContent = email;
   document.getElementById('session-role-label').textContent = `Rol: ADMIN · ${name}`;
-
-  if (avatar) {
-    document.getElementById('user-avatar-wrap').innerHTML = `<img src="${avatar}" alt="Avatar">`;
-  }
+  if (avatar) document.getElementById('user-avatar-wrap').innerHTML = `<img src="${avatar}" alt="Avatar">`;
 
   document.getElementById('auth-gate').style.display = 'none';
   document.getElementById('admin-wrap').classList.add('visible');
@@ -95,10 +81,7 @@ async function sbGet(path) {
   });
 })();
 
-async function doLogout() {
-  await sb.auth.signOut();
-  window.location.href = '/login';
-}
+async function doLogout() { await sb.auth.signOut(); window.location.href = '/login'; }
 
 // ══════════════════════════════════════════════════════
 //  CARGA DE DATOS
@@ -115,17 +98,13 @@ async function loadAll() {
     STATE.prods   = prods;
     STATE.newDays = parseInt(ajustes.find(a => a.clave === 'new_days')?.valor || '14');
     document.getElementById('new-days-val').value = STATE.newDays;
-
-    STATE.horario = parseAjusteJSON(ajustes, 'horario_semana', horarioPorDefecto());
+    STATE.horario     = parseAjusteJSON(ajustes, 'horario_semana', horarioPorDefecto());
     STATE.metodosPago = parseAjusteJSON(ajustes, 'metodos_pago', []);
     renderHorarioRows();
     renderPagoRows();
-  } finally {
-    showLoading(false);
-  }
+  } finally { showLoading(false); }
 }
 
-// ── Parsea de forma segura el valor JSON de una clave de ajustes ──
 function parseAjusteJSON(ajustes, clave, fallback) {
   const raw = ajustes.find(a => a.clave === clave)?.valor;
   if (!raw) return fallback;
@@ -134,29 +113,25 @@ function parseAjusteJSON(ajustes, clave, fallback) {
 
 function horarioPorDefecto() {
   const dia = { abierto: true, apertura: '08:00', cierre: '20:00' };
-  return { '0': {...dia}, '1': {...dia}, '2': {...dia}, '3': {...dia}, '4': {...dia}, '5': {...dia}, '6': {...dia} };
+  return Object.fromEntries([0,1,2,3,4,5,6].map(i => [String(i), {...dia}]));
 }
 
 // ══════════════════════════════════════════════════════
 //  HELPERS
 // ══════════════════════════════════════════════════════
-function fmt(n) { return '$' + parseInt(n).toLocaleString('es-CO'); }
-
-function esNuevo(p) {
-  if (!p.created_at) return false;
-  return (Date.now() - new Date(p.created_at).getTime()) < STATE.newDays * 86400000;
-}
-function mostrarNuevo(p) { return p.badge === 'new' || (p.badge_new_auto && esNuevo(p)); }
-function catNombre(id)   { return STATE.cats.find(c => c.id === id)?.nombre || id; }
-function catIcono(id)    { return STATE.cats.find(c => c.id === id)?.icono  || 'ti-category'; }
+function fmt(n)         { return '$' + parseInt(n).toLocaleString('es-CO'); }
+function esNuevo(p)     { if (!p.created_at) return false; return (Date.now() - new Date(p.created_at).getTime()) < STATE.newDays * 86400000; }
+function mostrarNuevo(p){ return p.badge === 'new' || (p.badge_new_auto && esNuevo(p)); }
+function catNombre(id)  { return STATE.cats.find(c => c.id === id)?.nombre || id; }
+function catIcono(id)   { return STATE.cats.find(c => c.id === id)?.icono  || 'ti-category'; }
 
 // ══════════════════════════════════════════════════════
-//  NAVEGACIÓN POR TABS
+//  TABS
 // ══════════════════════════════════════════════════════
 function switchTab(id) {
   activeTab = id;
   document.querySelectorAll('.tab-btn').forEach((b, i) =>
-    b.classList.toggle('active', ['resumen', 'productos', 'categorias', 'ajustes'][i] === id));
+    b.classList.toggle('active', ['resumen','productos','categorias','ajustes'][i] === id));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + id).classList.add('active');
   if (id === 'resumen')    renderResumen();
@@ -186,9 +161,9 @@ function renderResumen() {
 // ══════════════════════════════════════════════════════
 function renderProdList() {
   document.getElementById('filter-bar').innerHTML =
-    `<button class="filter-chip ${activeFilter === 'all' ? 'active' : ''}" onclick="setFilter('all')">Todos</button>` +
+    `<button class="filter-chip ${activeFilter==='all'?'active':''}" onclick="setFilter('all')">Todos</button>` +
     STATE.cats.map(c =>
-      `<button class="filter-chip ${activeFilter === c.id ? 'active' : ''}" onclick="setFilter('${c.id}')">${c.nombre}</button>`
+      `<button class="filter-chip ${activeFilter===c.id?'active':''}" onclick="setFilter('${c.id}')">${c.nombre}</button>`
     ).join('');
   const list = activeFilter === 'all' ? STATE.prods : STATE.prods.filter(p => p.categoria_id === activeFilter);
   document.getElementById('prod-list').innerHTML =
@@ -199,14 +174,14 @@ function setFilter(f) { activeFilter = f; renderProdList(); }
 
 function prodCardHtml(p) {
   const badges = [
-    mostrarNuevo(p) ? '<span class="badge-new-admin">✨ Nuevo</span>' : '',
+    mostrarNuevo(p)   ? '<span class="badge-new-admin">✨ Nuevo</span>'        : '',
     p.badge === 'rec' ? '<span class="badge-rec-admin">⭐ Recomendado</span>' : '',
-    !p.visible ? '<span class="badge-hidden">Oculto</span>' : '',
+    !p.visible        ? '<span class="badge-hidden">Oculto</span>'              : '',
   ].join('');
   return `
   <div class="prod-admin-card">
     <div class="prod-admin-thumb">
-      <img src="${p.imagen_url || ''}" alt="${p.nombre}"
+      <img src="${p.imagen_url||''}" alt="${p.nombre}"
            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <i class="ti ${catIcono(p.categoria_id)}" style="display:none"></i>
     </div>
@@ -219,7 +194,7 @@ function prodCardHtml(p) {
     <div class="prod-admin-actions">
       <button class="icon-btn" onclick="openEditModal('${p.id}')"><i class="ti ti-edit"></i></button>
       <button class="icon-btn" onclick="toggleVisible('${p.id}')">
-        <i class="ti ${p.visible ? 'ti-eye' : 'ti-eye-off'}"></i>
+        <i class="ti ${p.visible?'ti-eye':'ti-eye-off'}"></i>
       </button>
       <button class="icon-btn danger" onclick="confirmDelete('${p.id}')"><i class="ti ti-trash"></i></button>
     </div>
@@ -243,8 +218,8 @@ function renderCatList() {
       </div>
       <div class="prod-admin-info">
         <div class="prod-admin-name">${c.nombre}</div>
-        <div class="prod-admin-cat">${n} producto${n !== 1 ? 's' : ''} · orden ${c.orden}</div>
-        ${c.descripcion ? `<div class="prod-admin-cat">${c.descripcion}</div>` : ''}
+        <div class="prod-admin-cat">${n} producto${n!==1?'s':''} · orden ${c.orden}</div>
+        ${c.descripcion?`<div class="prod-admin-cat">${c.descripcion}</div>`:''}
       </div>
       <div class="prod-admin-actions">
         <button class="icon-btn" onclick="openEditCat('${c.id}')"><i class="ti ti-edit"></i></button>
@@ -263,7 +238,7 @@ function openAddModal() {
   ['f-name','f-price','f-desc-short','f-desc-long','f-img','f-img-url'].forEach(id =>
     document.getElementById(id).value = '');
   document.getElementById('img-preview-img').style.display = 'none';
-  document.getElementById('img-progress').style.display = 'none';
+  document.getElementById('img-progress').style.display    = 'none';
   document.getElementById('t-auto-new').classList.add('on');
   document.getElementById('t-new').classList.remove('on');
   document.getElementById('t-rec').classList.remove('on');
@@ -276,14 +251,14 @@ function openAddModal() {
 function openEditModal(id) {
   const p = STATE.prods.find(x => x.id === id);
   if (!p) return;
-  document.getElementById('edit-id').value   = p.id;
-  document.getElementById('modal-title').textContent = 'Editar producto';
-  document.getElementById('f-name').value        = p.nombre;
-  document.getElementById('f-price').value       = p.precio;
-  document.getElementById('f-desc-short').value  = p.desc_corta || '';
-  document.getElementById('f-desc-long').value   = p.desc_larga || '';
-  document.getElementById('f-img').value         = p.imagen_url || '';
-  document.getElementById('f-img-url').value     = p.imagen_url || '';
+  document.getElementById('edit-id').value              = p.id;
+  document.getElementById('modal-title').textContent    = 'Editar producto';
+  document.getElementById('f-name').value               = p.nombre;
+  document.getElementById('f-price').value              = p.precio;
+  document.getElementById('f-desc-short').value         = p.desc_corta || '';
+  document.getElementById('f-desc-long').value          = p.desc_larga || '';
+  document.getElementById('f-img').value                = p.imagen_url || '';
+  document.getElementById('f-img-url').value            = p.imagen_url || '';
   document.getElementById('img-progress').style.display = 'none';
   const imgEl = document.getElementById('img-preview-img');
   if (p.imagen_url) { imgEl.src = p.imagen_url; imgEl.style.display = 'block'; }
@@ -293,7 +268,7 @@ function openEditModal(id) {
   document.getElementById('t-rec').classList.toggle('on', p.badge === 'rec');
   document.getElementById('t-visible').classList.toggle('on', p.visible !== false);
   document.getElementById('f-cat').innerHTML =
-    STATE.cats.map(c => `<option value="${c.id}" ${c.id === p.categoria_id ? 'selected' : ''}>${c.nombre}</option>`).join('');
+    STATE.cats.map(c => `<option value="${c.id}" ${c.id===p.categoria_id?'selected':''}>${c.nombre}</option>`).join('');
   openModal('prod-modal');
 }
 
@@ -301,17 +276,17 @@ async function saveProduct() {
   const name  = document.getElementById('f-name').value.trim();
   const price = parseInt(document.getElementById('f-price').value);
   const cat   = document.getElementById('f-cat').value;
-  if (!name) { showToast('El nombre es obligatorio', true); return; }
-  if (!price || price < 0) { showToast('Precio no válido', true); return; }
+  if (!name)             { showToast('El nombre es obligatorio', true); return; }
+  if (!price || price<0) { showToast('Precio no válido', true); return; }
   const payload = {
-    categoria_id:  cat,
-    nombre:        name,
-    precio:        price,
-    desc_corta:    document.getElementById('f-desc-short').value.trim(),
-    desc_larga:    document.getElementById('f-desc-long').value.trim(),
-    imagen_url:    document.getElementById('f-img').value || document.getElementById('f-img-url').value,
-    badge:         document.getElementById('t-rec').classList.contains('on') ? 'rec'
-                 : document.getElementById('t-new').classList.contains('on') ? 'new' : '',
+    categoria_id:   cat,
+    nombre:         name,
+    precio:         price,
+    desc_corta:     document.getElementById('f-desc-short').value.trim(),
+    desc_larga:     document.getElementById('f-desc-long').value.trim(),
+    imagen_url:     document.getElementById('f-img').value || document.getElementById('f-img-url').value,
+    badge:          document.getElementById('t-rec').classList.contains('on') ? 'rec'
+                  : document.getElementById('t-new').classList.contains('on') ? 'new' : '',
     badge_new_auto: document.getElementById('t-auto-new').classList.contains('on'),
     visible:        document.getElementById('t-visible').classList.contains('on'),
   };
@@ -341,14 +316,14 @@ function openCatModal() {
   document.getElementById('cat-edit-id').value = '';
   document.getElementById('cat-modal-title').textContent = 'Nueva categoría';
   ['cat-name','cat-icon','cat-desc'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('cat-orden').value = Math.max(...STATE.cats.map(c => c.orden || 0), 0) + 1;
+  document.getElementById('cat-orden').value = Math.max(...STATE.cats.map(c => c.orden||0), 0) + 1;
   openModal('cat-modal');
 }
 
 function openEditCat(id) {
   const c = STATE.cats.find(x => x.id === id);
   if (!c) return;
-  document.getElementById('cat-edit-id').value     = c.id;
+  document.getElementById('cat-edit-id').value          = c.id;
   document.getElementById('cat-modal-title').textContent = 'Editar categoría';
   document.getElementById('cat-name').value  = c.nombre;
   document.getElementById('cat-icon').value  = c.icono;
@@ -376,10 +351,10 @@ async function saveCat() {
       if (idx >= 0) STATE.cats[idx] = { ...STATE.cats[idx], ...payload };
       showToast('Categoría actualizada ✓');
     } else {
-      const id = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      const id = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+        .replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
       const rows = await api('categorias.insert', { id, ...payload });
-      if (rows[0]) { STATE.cats.push(rows[0]); STATE.cats.sort((a, b) => (a.orden || 99) - (b.orden || 99)); }
+      if (rows[0]) { STATE.cats.push(rows[0]); STATE.cats.sort((a,b)=>(a.orden||99)-(b.orden||99)); }
       showToast('Categoría creada ✓');
     }
     closeModal('cat-modal'); renderCurrentTab();
@@ -388,7 +363,7 @@ async function saveCat() {
 }
 
 // ══════════════════════════════════════════════════════
-//  ACCIONES: VISIBILIDAD / ELIMINAR
+//  VISIBILIDAD / ELIMINAR
 // ══════════════════════════════════════════════════════
 async function toggleVisible(id) {
   const p = STATE.prods.find(x => x.id === id);
@@ -424,7 +399,7 @@ function confirmDeleteCat(id) {
   const c = STATE.cats.find(x => x.id === id);
   const n = STATE.prods.filter(p => p.categoria_id === id).length;
   document.getElementById('confirm-title').textContent = '¿Eliminar categoría?';
-  document.getElementById('confirm-desc').textContent  = `"${c?.nombre}" tiene ${n} producto${n !== 1 ? 's' : ''}. Los productos quedarán sin categoría.`;
+  document.getElementById('confirm-desc').textContent  = `"${c?.nombre}" tiene ${n} producto${n!==1?'s':''}. Los productos quedarán sin categoría.`;
   document.getElementById('confirm-ok').textContent    = 'Eliminar';
   document.getElementById('confirm-ok').onclick = async () => {
     closeConfirm(); showLoading(true);
@@ -440,7 +415,7 @@ function confirmDeleteCat(id) {
 function closeConfirm() { document.getElementById('confirm-overlay').classList.remove('open'); }
 
 // ══════════════════════════════════════════════════════
-//  AJUSTES
+//  AJUSTES — Badge "Nuevo"
 // ══════════════════════════════════════════════════════
 async function saveNewDays() {
   const v = parseInt(document.getElementById('new-days-val').value);
@@ -457,13 +432,27 @@ async function saveNewDays() {
 // ══════════════════════════════════════════════════════
 //  HORARIO DE ATENCIÓN
 // ══════════════════════════════════════════════════════
-const NOMBRES_DIA_ADMIN = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-const ORDEN_DIAS = [1, 2, 3, 4, 5, 6, 0]; // empieza en Lunes para mostrar
+const NOMBRES_DIA_ADMIN = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const ORDEN_DIAS = [1,2,3,4,5,6,0];
+
+// Genera opciones de hora cada 30 min para un <select>
+function horaOpts(selected) {
+  let html = '';
+  for (let h = 0; h < 24; h++) {
+    for (const m of [0, 30]) {
+      const val   = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+      const lh    = h % 12 || 12;
+      const ap    = h < 12 ? 'am' : 'pm';
+      const label = `${lh}:${String(m).padStart(2,'0')}${ap}`;
+      html += `<option value="${val}"${val === selected ? ' selected' : ''}>${label}</option>`;
+    }
+  }
+  return html;
+}
 
 function renderHorarioRows() {
   const cont = document.getElementById('horario-rows');
   if (!STATE.horario) return;
-
   cont.innerHTML = ORDEN_DIAS.map(i => {
     const dia = STATE.horario[String(i)] || { abierto: false, apertura: '08:00', cierre: '20:00' };
     return `
@@ -472,11 +461,13 @@ function renderHorarioRows() {
               onclick="toggleHorarioDia(${i})"></button>
       <span class="horario-day-name">${NOMBRES_DIA_ADMIN[i]}</span>
       <div class="horario-times" id="horario-times-${i}">
-        <input type="time" class="time-input" id="horario-apertura-${i}"
-               value="${dia.apertura}" ${dia.abierto ? '' : 'disabled'}>
+        <select class="time-select" id="horario-apertura-${i}" ${dia.abierto ? '' : 'disabled'}>
+          ${horaOpts(dia.apertura)}
+        </select>
         <span class="time-sep">–</span>
-        <input type="time" class="time-input" id="horario-cierre-${i}"
-               value="${dia.cierre}" ${dia.abierto ? '' : 'disabled'}>
+        <select class="time-select" id="horario-cierre-${i}" ${dia.abierto ? '' : 'disabled'}>
+          ${horaOpts(dia.cierre)}
+        </select>
       </div>
     </div>`;
   }).join('');
@@ -487,22 +478,21 @@ function toggleHorarioDia(i) {
   toggle.classList.toggle('on');
   const abierto = toggle.classList.contains('on');
   document.getElementById(`horario-apertura-${i}`).disabled = !abierto;
-  document.getElementById(`horario-cierre-${i}`).disabled = !abierto;
+  document.getElementById(`horario-cierre-${i}`).disabled   = !abierto;
 }
 
 async function saveHorario() {
   const nuevo = {};
   for (let i = 0; i < 7; i++) {
-    const abierto = document.getElementById(`horario-toggle-${i}`).classList.contains('on');
+    const abierto  = document.getElementById(`horario-toggle-${i}`).classList.contains('on');
     const apertura = document.getElementById(`horario-apertura-${i}`).value || '08:00';
-    const cierre   = document.getElementById(`horario-cierre-${i}`).value || '20:00';
+    const cierre   = document.getElementById(`horario-cierre-${i}`).value  || '20:00';
     if (abierto && apertura >= cierre) {
-      showToast(`${NOMBRES_DIA_ADMIN[i]}: la hora de cierre debe ser después de la apertura`, true);
+      showToast(`${NOMBRES_DIA_ADMIN[i]}: el cierre debe ser después de la apertura`, true);
       return;
     }
     nuevo[String(i)] = { abierto, apertura, cierre };
   }
-
   showLoading(true);
   try {
     await api('ajustes.update', { clave: 'horario_semana', valor: JSON.stringify(nuevo) });
@@ -535,7 +525,6 @@ async function agregarMetodoPago() {
   const valor = input.value.trim();
   if (!valor) { showToast('Escribe un nombre para el método de pago', true); return; }
   if (STATE.metodosPago.includes(valor)) { showToast('Ese método ya está en la lista', true); return; }
-
   const nuevaLista = [...STATE.metodosPago, valor];
   showLoading(true);
   try {
@@ -549,7 +538,7 @@ async function agregarMetodoPago() {
 }
 
 async function quitarMetodoPago(idx) {
-  const nuevaLista = STATE.metodosPago.filter((_, i) => i !== idx);
+  const nuevaLista = STATE.metodosPago.filter((_,i) => i !== idx);
   showLoading(true);
   try {
     await api('ajustes.update', { clave: 'metodos_pago', valor: JSON.stringify(nuevaLista) });
@@ -560,78 +549,29 @@ async function quitarMetodoPago(idx) {
   finally { showLoading(false); }
 }
 
-async function exportData() {
-  const fecha = new Date().toISOString().slice(0, 10);
-
-  // ── Construir filas enriquecidas con nombre de categoría ──
-  const filas = STATE.prods.map(p => ({
-    id:          p.id,
-    nombre:      p.nombre,
-    categoria:   catNombre(p.categoria_id),
-    precio:      p.precio,
-    desc_corta:  p.desc_corta  || '',
-    desc_larga:  p.desc_larga  || '',
-    imagen_url:  p.imagen_url  || '',
-    badge:       p.badge       || '',
-    visible:     p.visible ? 'Sí' : 'No',
-    creado:      p.created_at  ? p.created_at.slice(0, 10) : '',
-  }));
-
-  // ── CSV ──
-  const cols = ['id','nombre','categoria','precio','desc_corta','desc_larga','imagen_url','badge','visible','creado'];
-  const csvHead = cols.join(';');
-  const csvRows = filas.map(f =>
-    cols.map(c => `"${String(f[c]).replace(/"/g,'""')}"`).join(';')
-  );
-  const csvContent = [csvHead, ...csvRows].join('\n');
-  const bom = '\uFEFF'; // BOM para que Excel abra bien el UTF-8
-  descargar(bom + csvContent, `mundo-delis-productos-${fecha}.csv`, 'text/csv;charset=utf-8');
-
-  showToast('Productos exportados como CSV ✓');
-}
-
-function descargar(contenido, nombre, tipo) {
-  const blob = new Blob([contenido], { type: tipo });
-  const a    = document.createElement('a');
-  a.href     = URL.createObjectURL(blob);
-  a.download = nombre;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-}
-
 // ══════════════════════════════════════════════════════
 //  IMAGEN UPLOAD
 // ══════════════════════════════════════════════════════
 async function handleImgFile(input) {
   const file = input.files[0];
   if (!file) return;
-
-  const MAX_MB = 4;
-  if (file.size > MAX_MB * 1024 * 1024) {
-    showToast(`La imagen pesa demasiado (máx. ${MAX_MB}MB). Comprímela e intenta de nuevo.`, true);
-    input.value = '';
-    return;
+  if (file.size > 4 * 1024 * 1024) {
+    showToast('La imagen pesa demasiado (máx. 4MB). Comprímela e intenta de nuevo.', true);
+    input.value = ''; return;
   }
-
   const reader = new FileReader();
   reader.onload = e => {
     const img = document.getElementById('img-preview-img');
     img.src = e.target.result; img.style.display = 'block';
   };
   reader.readAsDataURL(file);
-
   const prog = document.getElementById('img-progress');
-  prog.style.display = 'block';
-  prog.textContent = '⬆️ Subiendo imagen…';
-  prog.style.color = 'var(--gold)';
-
+  prog.style.display = 'block'; prog.textContent = '⬆️ Subiendo imagen…'; prog.style.color = 'var(--gold)';
   try {
     const base64 = await fileToBase64(file);
     const ext    = file.name.split('.').pop().toLowerCase();
     const path   = `productos/${Date.now()}.${ext}`;
-
     const { publicUrl } = await api('storage.upload', { path, base64, contentType: file.type });
-
     document.getElementById('f-img').value     = publicUrl;
     document.getElementById('f-img-url').value = publicUrl;
     prog.textContent = '✅ Imagen subida';
@@ -642,7 +582,6 @@ async function handleImgFile(input) {
   }
 }
 
-// ── Convierte un File a base64 puro (sin el prefijo "data:...;base64,") ──
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -661,10 +600,10 @@ function syncImgUrl(val) {
 // ══════════════════════════════════════════════════════
 //  UTILS UI
 // ══════════════════════════════════════════════════════
-function toggleBtn(el)   { el.classList.toggle('on'); }
-function openModal(id)   { document.getElementById(id).classList.add('open'); }
-function closeModal(id)  { document.getElementById(id).classList.remove('open'); }
-function showLoading(v)  { document.getElementById('loading-overlay').classList.toggle('open', v); }
+function toggleBtn(el)  { el.classList.toggle('on'); }
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function showLoading(v) { document.getElementById('loading-overlay').classList.toggle('open', v); }
 
 document.querySelectorAll('.modal-overlay').forEach(o =>
   o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); })
