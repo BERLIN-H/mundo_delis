@@ -15,13 +15,11 @@
 </head>
 <body>
 
-  <!-- Auth gate: visible mientras verifica sesión -->
   <div id="auth-gate">
     <div class="gate-spinner"></div>
     <p class="gate-text">Verificando acceso…</p>
   </div>
 
-  <!-- Panel principal (oculto hasta confirmar ADMIN) -->
   <div class="admin-wrap" id="admin-wrap">
 
     <!-- TOP BAR -->
@@ -31,7 +29,7 @@
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <i class="ti ti-rosette"></i>
       </div>
-      <div style="flex:1">
+      <div style="flex:1;min-width:0;">
         <div class="admin-topbar-title">Mundo Delis</div>
         <div class="admin-topbar-sub" id="user-email-bar">Panel de administración</div>
       </div>
@@ -88,6 +86,8 @@
 
       <!-- AJUSTES -->
       <div class="panel" id="panel-ajustes">
+
+        <!-- Badge Nuevo -->
         <div class="settings-card">
           <h3><i class="ti ti-sparkles"></i> Badge "Nuevo"</h3>
           <div class="setting-row">
@@ -97,25 +97,23 @@
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
               <input class="field-input" type="number" id="new-days-val" min="1" max="90" value="14"
-                     style="width:70px;text-align:center">
+                     style="width:64px;text-align:center;padding:8px;">
               <span style="font-size:13px;color:var(--text-soft)">días</span>
             </div>
           </div>
-          <div class="setting-row">
-            <div></div>
-            <button class="add-btn" onclick="saveNewDays()" style="padding:8px 14px;font-size:12px">
+          <div class="setting-row" style="justify-content:flex-end;">
+            <button class="add-btn" onclick="saveNewDays()" style="padding:8px 16px;font-size:13px;">
               <i class="ti ti-device-floppy"></i> Guardar
             </button>
           </div>
         </div>
 
-        <!-- HORARIO DE ATENCIÓN -->
+        <!-- HORARIO -->
         <div class="settings-card">
           <h3><i class="ti ti-clock"></i> Horario de domicilios</h3>
           <div id="horario-rows"></div>
-          <div class="setting-row">
-            <div></div>
-            <button class="add-btn" onclick="saveHorario()" style="padding:8px 14px;font-size:12px">
+          <div style="margin-top:14px;display:flex;justify-content:flex-end;">
+            <button class="add-btn" onclick="saveHorario()" style="padding:10px 18px;font-size:13px;">
               <i class="ti ti-device-floppy"></i> Guardar horario
             </button>
           </div>
@@ -124,28 +122,31 @@
         <!-- MÉTODOS DE PAGO -->
         <div class="settings-card">
           <h3><i class="ti ti-credit-card"></i> Métodos de pago</h3>
-          <div id="pago-rows" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
-          <div class="setting-row">
-            <input class="field-input" type="text" id="nuevo-metodo-pago" placeholder="Ej: Daviplata"
-                   style="flex:1;margin-right:8px;">
-            <button class="add-btn" onclick="agregarMetodoPago()" style="padding:8px 14px;font-size:12px">
+          <div id="pago-rows" style="margin-bottom:12px;"></div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input class="field-input" type="text" id="nuevo-metodo-pago"
+                   placeholder="Ej: Daviplata" style="flex:1;">
+            <button class="add-btn" onclick="agregarMetodoPago()" style="padding:10px 14px;white-space:nowrap;">
               <i class="ti ti-plus"></i> Agregar
             </button>
           </div>
         </div>
 
+        <!-- SESIÓN -->
         <div class="settings-card">
           <h3><i class="ti ti-shield-lock"></i> Sesión activa</h3>
           <div class="setting-row">
             <div>
               <div class="setting-label" id="session-user-label">Usuario</div>
-              <div class="setting-sub"  id="session-role-label">Rol: ADMIN</div>
+              <div class="setting-sub" id="session-role-label">Rol: ADMIN</div>
             </div>
             <button class="icon-btn danger" onclick="doLogout()" title="Cerrar sesión">
               <i class="ti ti-logout"></i>
             </button>
           </div>
         </div>
+
+        <!-- ACCESO RÁPIDO -->
         <div class="settings-card">
           <h3><i class="ti ti-link"></i> Acceso rápido</h3>
           <div class="setting-row">
@@ -155,20 +156,10 @@
             </a>
           </div>
         </div>
-        <div class="settings-card">
-          <h3><i class="ti ti-database-export"></i> Datos</h3>
-          <div class="setting-row">
-            <div>
-              <div class="setting-label">Exportar catálogo</div>
-              <div class="setting-sub">Descarga JSON de respaldo</div>
-            </div>
-            <button class="icon-btn" onclick="exportData()"><i class="ti ti-download"></i></button>
-          </div>
-        </div>
-      </div>
 
-    </div>
-  </div>
+      </div><!-- /panel-ajustes -->
+    </div><!-- /admin-content -->
+  </div><!-- /admin-wrap -->
 
   <!-- MODAL PRODUCTO -->
   <div class="modal-overlay" id="prod-modal">
@@ -217,31 +208,19 @@
         </div>
         <div style="background:var(--cream);border-radius:12px;padding:14px;">
           <div class="toggle-row">
-            <div>
-              <div class="toggle-label">Badge automático "Nuevo"</div>
-              <div class="toggle-sub">Activo los primeros N días</div>
-            </div>
+            <div><div class="toggle-label">Badge automático "Nuevo"</div><div class="toggle-sub">Activo los primeros N días</div></div>
             <button class="toggle on" id="t-auto-new" onclick="toggleBtn(this)"></button>
           </div>
           <div class="toggle-row">
-            <div>
-              <div class="toggle-label">Forzar badge "Nuevo" ✨</div>
-              <div class="toggle-sub">Manual, ignora la fecha</div>
-            </div>
+            <div><div class="toggle-label">Forzar badge "Nuevo" ✨</div><div class="toggle-sub">Manual, ignora la fecha</div></div>
             <button class="toggle" id="t-new" onclick="toggleBtn(this)"></button>
           </div>
           <div class="toggle-row">
-            <div>
-              <div class="toggle-label">⭐ Recomendado</div>
-              <div class="toggle-sub">Aparece destacado</div>
-            </div>
+            <div><div class="toggle-label">⭐ Recomendado</div><div class="toggle-sub">Aparece destacado</div></div>
             <button class="toggle" id="t-rec" onclick="toggleBtn(this)"></button>
           </div>
           <div class="toggle-row">
-            <div>
-              <div class="toggle-label">Visible en el menú</div>
-              <div class="toggle-sub">Desactiva para ocultar sin eliminar</div>
-            </div>
+            <div><div class="toggle-label">Visible en el menú</div><div class="toggle-sub">Desactiva para ocultar sin eliminar</div></div>
             <button class="toggle on" id="t-visible" onclick="toggleBtn(this)"></button>
           </div>
         </div>
@@ -297,10 +276,7 @@
     </div>
   </div>
 
-  <!-- LOADING & TOAST -->
-  <div class="loading-overlay" id="loading-overlay">
-    <div class="loading-spinner"></div>
-  </div>
+  <div class="loading-overlay" id="loading-overlay"><div class="loading-spinner"></div></div>
   <div class="toast" id="toast"><i class="ti ti-check"></i><span id="toast-msg"></span></div>
 
   <script src="../js/admin.js"></script>

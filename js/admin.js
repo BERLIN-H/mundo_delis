@@ -467,18 +467,16 @@ function renderHorarioRows() {
   cont.innerHTML = ORDEN_DIAS.map(i => {
     const dia = STATE.horario[String(i)] || { abierto: false, apertura: '08:00', cierre: '20:00' };
     return `
-    <div class="setting-row" id="horario-row-${i}">
-      <div style="display:flex;align-items:center;gap:10px;flex:1;">
-        <button class="toggle ${dia.abierto ? 'on' : ''}" id="horario-toggle-${i}"
-          onclick="toggleHorarioDia(${i})"></button>
-        <span class="setting-label" style="min-width:78px;">${NOMBRES_DIA_ADMIN[i]}</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;" id="horario-times-${i}">
-        <input type="time" class="field-input" id="horario-apertura-${i}" value="${dia.apertura}"
-               style="width:100px;padding:6px 8px;font-size:12px;" ${dia.abierto ? '' : 'disabled'}>
-        <span style="font-size:12px;color:var(--text-soft);">–</span>
-        <input type="time" class="field-input" id="horario-cierre-${i}" value="${dia.cierre}"
-               style="width:100px;padding:6px 8px;font-size:12px;" ${dia.abierto ? '' : 'disabled'}>
+    <div class="horario-row" id="horario-row-${i}">
+      <button class="toggle ${dia.abierto ? 'on' : ''}" id="horario-toggle-${i}"
+              onclick="toggleHorarioDia(${i})"></button>
+      <span class="horario-day-name">${NOMBRES_DIA_ADMIN[i]}</span>
+      <div class="horario-times" id="horario-times-${i}">
+        <input type="time" class="time-input" id="horario-apertura-${i}"
+               value="${dia.apertura}" ${dia.abierto ? '' : 'disabled'}>
+        <span class="time-sep">–</span>
+        <input type="time" class="time-input" id="horario-cierre-${i}"
+               value="${dia.cierre}" ${dia.abierto ? '' : 'disabled'}>
       </div>
     </div>`;
   }).join('');
